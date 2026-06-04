@@ -3,9 +3,10 @@ import { useRef, useState } from 'react';
 interface OTPInputProps {
   length?: number;
   onComplete: (otp: string) => void;
+  disabled?: boolean;
 }
 
-export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
+export function OTPInput({ length = 6, onComplete, disabled = false }: OTPInputProps) {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -60,7 +61,8 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={index === 0 ? handlePaste : undefined}
-          className="w-12 h-14 text-center text-2xl bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring/20"
+          disabled={disabled}
+          className="w-12 h-14 text-center text-2xl bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:opacity-50 disabled:cursor-not-allowed"
         />
       ))}
     </div>
