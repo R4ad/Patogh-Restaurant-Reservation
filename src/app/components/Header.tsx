@@ -50,7 +50,13 @@ export function Header({ onMenuClick }: HeaderProps) {
             {isAuthenticated ? (
               <>
                 <Link
-                  to={user?.role === 'manager' ? '/manager-dashboard' : '/customer-dashboard'}
+                  to={
+                    user?.role === 'admin'
+                      ? '/admin'
+                      : user?.role === 'manager'
+                      ? '/manager-dashboard'
+                      : '/customer-dashboard'
+                  }
                   className="hidden sm:flex items-center gap-2 px-4 py-2 text-foreground hover:bg-muted rounded-lg transition-colors"
                 >
                   <User className="w-4 h-4" />
