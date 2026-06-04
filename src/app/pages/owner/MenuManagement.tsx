@@ -39,7 +39,7 @@ const initialItems: MenuItem[] = [
     description: 'اسپرسو با شیر گرم و کف شیر',
     price: '45000',
     category: '1',
-    image: '/images/food-1.jpg
+    image: '/images/food-1.jpg',
     available: true,
     tags: ['محبوب'],
   },
