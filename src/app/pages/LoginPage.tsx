@@ -47,7 +47,7 @@ export function LoginPage() {
         {/* تصویر سمت چپ */}
         <div className="hidden lg:block relative">
           <img
-            src="https://images.unsplash.com/photo-1511081692775-05d0f180a065?w=1200"
+            src="/images/restaurant-1.jpg"
             alt="کافه"
             className="w-full h-full object-cover"
           />

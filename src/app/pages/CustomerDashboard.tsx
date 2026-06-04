@@ -8,7 +8,7 @@ const reservations = [
     id: '1',
     restaurant: {
       name: 'کافه نادری',
-      image: 'https://images.unsplash.com/photo-1511081692775-05d0f180a065?w=400',
+      image: '/images/restaurant-1.jpg
     },
     date: '۱۴۰۳/۰۳/۱۵',
     time: '۱۸:۰۰',
@@ -20,7 +20,7 @@ const reservations = [
     id: '2',
     restaurant: {
       name: 'رستوران سنتی شیراز',
-      image: 'https://images.unsplash.com/photo-1778785241914-7f75ca16a92d?w=400',
+      image: '/images/restaurant-2.jpg
     },
     date: '۱۴۰۳/۰۳/۱۰',
     time: '۲۰:۰۰',
@@ -32,7 +32,7 @@ const reservations = [
     id: '3',
     restaurant: {
       name: 'کافه رویال',
-      image: 'https://images.unsplash.com/photo-1522126039546-182129aa0b93?w=400',
+      image: '/images/restaurant-3.jpg
     },
     date: '۱۴۰۳/۰۳/۰۵',
     time: '۱۶:۰۰',
@@ -44,7 +44,7 @@ const reservations = [
     id: '4',
     restaurant: {
       name: 'رستوران آریا',
-      image: 'https://images.unsplash.com/photo-1778634304493-23531df07739?w=400',
+      image: '/images/restaurant-4.jpg
     },
     date: '۱۴۰۳/۰۲/۲۵',
     time: '۱۹:۳۰',

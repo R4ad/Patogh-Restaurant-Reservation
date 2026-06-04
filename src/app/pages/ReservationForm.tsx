@@ -14,7 +14,7 @@ export function ReservationForm() {
   const reservation = {
     restaurant: {
       name: 'کافه نادری',
-      image: 'https://images.unsplash.com/photo-1511081692775-05d0f180a065?w=400',
+      image: '/images/restaurant-1.jpg
     },
     date: '۱۴۰۳/۰۳/۱۵',
     time: '۱۸:۰۰',

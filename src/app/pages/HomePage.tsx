@@ -6,7 +6,7 @@ const featuredRestaurants = [
   {
     id: '1',
     name: 'کافه نادری',
-    image: 'https://images.unsplash.com/photo-1511081692775-05d0f180a065?w=800',
+    image: '/images/restaurant-1.jpg
     rating: 4.8,
     reviewCount: 234,
     category: 'کافه مدرن',
@@ -16,7 +16,7 @@ const featuredRestaurants = [
   {
     id: '2',
     name: 'رستوران سنتی شیراز',
-    image: 'https://images.unsplash.com/photo-1778785241914-7f75ca16a92d?w=800',
+    image: '/images/restaurant-2.jpg
     rating: 4.9,
     reviewCount: 456,
     category: 'رستوران سنتی',
@@ -26,7 +26,7 @@ const featuredRestaurants = [
   {
     id: '3',
     name: 'کافه رویال',
-    image: 'https://images.unsplash.com/photo-1522126039546-182129aa0b93?w=800',
+    image: '/images/restaurant-3.jpg
     rating: 4.7,
     reviewCount: 189,
     category: 'کافه',
@@ -36,7 +36,7 @@ const featuredRestaurants = [
   {
     id: '4',
     name: 'رستوران آریا',
-    image: 'https://images.unsplash.com/photo-1778634304493-23531df07739?w=800',
+    image: '/images/restaurant-4.jpg
     rating: 4.6,
     reviewCount: 312,
     category: 'رستوران ایرانی',
@@ -46,7 +46,7 @@ const featuredRestaurants = [
   {
     id: '5',
     name: 'کافه آرت',
-    image: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=800',
+    image: '/images/restaurant-5.jpg
     rating: 4.8,
     reviewCount: 267,
     category: 'کافه هنری',
@@ -56,7 +56,7 @@ const featuredRestaurants = [
   {
     id: '6',
     name: 'رستوران پارسیان',
-    image: 'https://images.unsplash.com/photo-1759216282424-a48582525298?w=800',
+    image: '/images/restaurant-6.jpg
     rating: 4.9,
     reviewCount: 523,
     category: 'رستوران لوکس',

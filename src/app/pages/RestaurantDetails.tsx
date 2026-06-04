@@ -11,7 +11,7 @@ export function RestaurantDetails() {
 
   const restaurant = {
     name: 'کافه نادری',
-    image: 'https://images.unsplash.com/photo-1511081692775-05d0f180a065?w=1200',
+    image: '/images/restaurant-1.jpg
     rating: 4.8,
     reviewCount: 234,
     category: 'کافه مدرن',
@@ -27,28 +27,28 @@ export function RestaurantDetails() {
       name: 'کاپوچینو',
       description: 'اسپرسو با شیر گرم و کف شیر',
       price: '۴۵,۰۰۰',
-      image: 'https://images.unsplash.com/photo-1542372147193-a7aca54189cd?w=400',
+      image: '/images/food-1.jpg
     },
     {
       id: 2,
       name: 'چیزکیک توت فرنگی',
       description: 'چیزکیک خانگی با سس توت فرنگی',
       price: '۶۵,۰۰۰',
-      image: 'https://images.unsplash.com/photo-1542372147193-a7aca54189cd?w=400',
+      image: '/images/food-1.jpg
     },
     {
       id: 3,
       name: 'ساندویچ کلاب',
       description: 'مرغ، گوشت، پنیر، سبزیجات تازه',
       price: '۱۲۵,۰۰۰',
-      image: 'https://images.unsplash.com/photo-1778634304493-23531df07739?w=400',
+      image: '/images/restaurant-4.jpg
     },
     {
       id: 4,
       name: 'لاته',
       description: 'اسپرسو با شیر داغ',
       price: '۵۰,۰۰۰',
-      image: 'https://images.unsplash.com/photo-1542372147193-a7aca54189cd?w=400',
+      image: '/images/food-1.jpg
     },
   ];
 

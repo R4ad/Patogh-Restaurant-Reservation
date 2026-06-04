@@ -7,7 +7,7 @@ const savedRestaurants = [
   {
     id: '1',
     name: 'کافه نادری',
-    image: 'https://images.unsplash.com/photo-1511081692775-05d0f180a065?w=800',
+    image: '/images/restaurant-1.jpg
     rating: 4.8,
     reviewCount: 234,
     category: 'کافه مدرن',
@@ -17,7 +17,7 @@ const savedRestaurants = [
   {
     id: '2',
     name: 'رستوران سنتی شیراز',
-    image: 'https://images.unsplash.com/photo-1778785241914-7f75ca16a92d?w=800',
+    image: '/images/restaurant-2.jpg
     rating: 4.9,
     reviewCount: 456,
     category: 'رستوران سنتی',
