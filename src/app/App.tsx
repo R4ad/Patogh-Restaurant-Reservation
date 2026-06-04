@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
 import { BottomNav } from './components/shared/BottomNav';
@@ -27,27 +26,17 @@ import { WorkingHoursSettings } from './pages/owner/WorkingHoursSettings';
 
 function AppContent() {
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const loggedIn = location.pathname.includes('dashboard');
-    setIsLoggedIn(loggedIn);
-  }, [location.pathname]);
 
   const isDashboard = location.pathname.includes('dashboard');
   const isLogin = location.pathname.includes('/login');
   const isOnboarding = location.pathname.includes('/onboarding');
-  const showBottomNav = !isDashboard && !isLogin && !isOnboarding;
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    window.location.href = '/';
-  };
+  const isAdmin = location.pathname.startsWith('/admin');
+  const showBottomNav = !isDashboard && !isLogin && !isOnboarding && !isAdmin;
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
-      {!isDashboard && !isLogin && !isOnboarding && (
-        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      {!isDashboard && !isLogin && !isOnboarding && !isAdmin && (
+        <Header />
       )}
 
       <Routes>

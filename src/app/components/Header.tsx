@@ -1,14 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
-  isLoggedIn?: boolean;
-  onLogout?: () => void;
   onMenuClick?: () => void;
 }
 
-export function Header({ isLoggedIn = false, onLogout, onMenuClick }: HeaderProps) {
+export function Header({ onMenuClick }: HeaderProps) {
   const location = useLocation();
+  const { isAuthenticated, logout, user } = useAuth();
   const isDashboard = location.pathname.includes('dashboard');
 
   return (
@@ -47,17 +47,17 @@ export function Header({ isLoggedIn = false, onLogout, onMenuClick }: HeaderProp
           )}
 
           <div className="flex items-center gap-3">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <>
                 <Link
-                  to="/customer-dashboard"
+                  to={user?.role === 'manager' ? '/manager-dashboard' : '/customer-dashboard'}
                   className="hidden sm:flex items-center gap-2 px-4 py-2 text-foreground hover:bg-muted rounded-lg transition-colors"
                 >
                   <User className="w-4 h-4" />
                   <span>داشبورد من</span>
                 </Link>
                 <button
-                  onClick={onLogout}
+                  onClick={logout}
                   className="flex items-center gap-2 px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
