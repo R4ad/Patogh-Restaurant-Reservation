@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { sendOTP } from '../services/auth.service';
-import { IS_MOCK } from '../services/client';
+import { useAuth } from '../../context/AuthContext';
+import { sendOTP } from '../../services/auth.service';
+import { IS_MOCK } from '../../services/client';
 
 type LoginMode = 'otp' | 'password';
 

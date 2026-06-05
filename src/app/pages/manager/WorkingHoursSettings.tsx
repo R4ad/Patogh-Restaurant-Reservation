@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sidebar } from '../../components/Sidebar';
+import { Sidebar } from '../../components/layout/Sidebar';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
 import { Plus, Trash2, Save } from 'lucide-react';

@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Calendar, Clock, Users, ChevronLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '../context/AuthContext';
-import { getRestaurantById } from '../services/restaurant.service';
-import type { Restaurant } from '../types';
+import { useAuth } from '../../context/AuthContext';
+import { getRestaurantById } from '../../services/restaurant.service';
+import type { Restaurant } from '../../types';
 
 export function ReservationForm() {
   const { id } = useParams<{ id: string }>();

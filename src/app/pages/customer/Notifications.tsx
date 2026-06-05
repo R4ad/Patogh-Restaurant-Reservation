@@ -1,5 +1,5 @@
 import { Bell, CheckCircle, XCircle, Info } from 'lucide-react';
-import { EmptyState } from '../components/shared/EmptyState';
+import { EmptyState } from '../../components/shared/EmptyState';
 
 const notifications = [
   {

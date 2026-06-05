@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sidebar } from '../../components/Sidebar';
+import { Sidebar } from '../../components/layout/Sidebar';
 import { Button } from '../../components/shared/Button';
 import { Modal } from '../../components/shared/Modal';
 import { Input } from '../../components/shared/Input';

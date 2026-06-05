@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { RestaurantCard } from '../components/RestaurantCard';
-import { EmptyState } from '../components/shared/EmptyState';
+import { RestaurantCard } from '../../components/shared/RestaurantCard';
+import { EmptyState } from '../../components/shared/EmptyState';
 import { Heart } from 'lucide-react';
 
 const savedRestaurants = [

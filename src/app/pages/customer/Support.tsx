@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Input } from '../components/shared/Input';
-import { Textarea } from '../components/shared/Textarea';
-import { Button } from '../components/shared/Button';
-import { Select } from '../components/shared/Select';
+import { Input } from '../../components/shared/Input';
+import { Textarea } from '../../components/shared/Textarea';
+import { Button } from '../../components/shared/Button';
+import { Select } from '../../components/shared/Select';
 import { HelpCircle, Send } from 'lucide-react';
 
 const faqs = [

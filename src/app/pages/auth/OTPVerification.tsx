@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
-import { OTPInput } from '../components/shared/OTPInput';
-import { useAuth } from '../context/AuthContext';
-import { sendOTP } from '../services/auth.service';
-import { IS_MOCK } from '../services/client';
+import { OTPInput } from '../../components/shared/OTPInput';
+import { useAuth } from '../../context/AuthContext';
+import { sendOTP } from '../../services/auth.service';
+import { IS_MOCK } from '../../services/client';
 
 export function OTPVerification() {
   const navigate = useNavigate();

@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X, Search } from 'lucide-react';
-import { RestaurantCard } from '../components/RestaurantCard';
-import { SearchBar } from '../components/SearchBar';
+import { RestaurantCard } from '../components/shared/RestaurantCard';
+import { SearchBar } from '../components/shared/SearchBar';
 import { RestaurantCardSkeleton } from '../components/shared/SkeletonLoader';
 import { EmptyState } from '../components/shared/EmptyState';
 import { getRestaurants } from '../services/restaurant.service';

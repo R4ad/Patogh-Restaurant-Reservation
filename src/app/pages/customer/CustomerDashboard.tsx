@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Sidebar } from '../components/Sidebar';
-import { StatusBadge } from '../components/StatusBadge';
+import { Sidebar } from '../../components/layout/Sidebar';
+import { StatusBadge } from '../../components/shared/StatusBadge';
 import { Calendar, Clock, Users, MoreVertical } from 'lucide-react';
 
 const reservations = [

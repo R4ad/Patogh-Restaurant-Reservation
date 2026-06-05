@@ -1,31 +1,35 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { Header } from './components/Header';
-import { BottomNav } from './components/shared/BottomNav';
+import { Header } from './components/layout/Header';
+import { BottomNav } from './components/layout/BottomNav';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
-// Customer pages
+// ── صفحات عمومی ─────────────────────────────────────────────
 import { HomePage } from './pages/HomePage';
 import { SearchResults } from './pages/SearchResults';
 import { RestaurantDetails } from './pages/RestaurantDetails';
-import { ReservationForm } from './pages/ReservationForm';
-import { ReservationConfirmation } from './pages/ReservationConfirmation';
-import { RoleSelection } from './pages/RoleSelection';
-import { LoginPage } from './pages/LoginPage';
-import { OTPVerification } from './pages/OTPVerification';
-import { CustomerDashboard } from './pages/CustomerDashboard';
-import { Favorites } from './pages/Favorites';
-import { Notifications } from './pages/Notifications';
-import { Support } from './pages/Support';
 import { NotFound } from './pages/NotFound';
 
-// Owner pages
-import { ManagerDashboard } from './pages/ManagerDashboard';
-import { RestaurantOnboarding } from './pages/owner/RestaurantOnboarding';
-import { MenuManagement } from './pages/owner/MenuManagement';
-import { WorkingHoursSettings } from './pages/owner/WorkingHoursSettings';
+// ── احراز هویت ──────────────────────────────────────────────
+import { RoleSelection } from './pages/auth/RoleSelection';
+import { LoginPage } from './pages/auth/LoginPage';
+import { OTPVerification } from './pages/auth/OTPVerification';
 
-// Admin pages
+// ── صفحات مشتری ─────────────────────────────────────────────
+import { CustomerDashboard } from './pages/customer/CustomerDashboard';
+import { ReservationForm } from './pages/customer/ReservationForm';
+import { ReservationConfirmation } from './pages/customer/ReservationConfirmation';
+import { Favorites } from './pages/customer/Favorites';
+import { Notifications } from './pages/customer/Notifications';
+import { Support } from './pages/customer/Support';
+
+// ── صفحات مدیر رستوران ──────────────────────────────────────
+import { ManagerDashboard } from './pages/manager/ManagerDashboard';
+import { RestaurantOnboarding } from './pages/manager/RestaurantOnboarding';
+import { MenuManagement } from './pages/manager/MenuManagement';
+import { WorkingHoursSettings } from './pages/manager/WorkingHoursSettings';
+
+// ── صفحات مدیر ارشد (Admin) ─────────────────────────────────
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 
@@ -33,9 +37,9 @@ function AppContent() {
   const location = useLocation();
 
   const isDashboard = location.pathname.includes('dashboard');
-  const isLogin = location.pathname.includes('/login');
+  const isLogin     = location.pathname.includes('/login');
   const isOnboarding = location.pathname.includes('/onboarding');
-  const isAdmin = location.pathname.startsWith('/admin');
+  const isAdmin     = location.pathname.startsWith('/admin');
   const showBottomNav = !isDashboard && !isLogin && !isOnboarding && !isAdmin;
 
   return (
@@ -45,19 +49,19 @@ function AppContent() {
       )}
 
       <Routes>
-        {/* صفحات عمومی مشتری */}
+        {/* ── عمومی (بدون لاگین) ──────────────────────── */}
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/restaurant/:id" element={<RestaurantDetails />} />
         <Route path="/support" element={<Support />} />
 
-        {/* Auth */}
+        {/* ── احراز هویت ─────────────────────────────── */}
         <Route path="/login" element={<RoleSelection />} />
         <Route path="/login/customer" element={<LoginPage />} />
         <Route path="/login/owner" element={<LoginPage />} />
         <Route path="/otp-verify" element={<OTPVerification />} />
 
-        {/* صفحات محافظت‌شده مشتری */}
+        {/* ── مشتری (نیاز به لاگین) ────────────────── */}
         <Route path="/reservation/:id" element={
           <ProtectedRoute roles={['customer']}>
             <ReservationForm />
@@ -84,7 +88,7 @@ function AppContent() {
           </ProtectedRoute>
         } />
 
-        {/* صفحات محافظت‌شده مدیر رستوران */}
+        {/* ── مدیر رستوران (نیاز به لاگین) ─────────── */}
         <Route path="/onboarding" element={
           <ProtectedRoute roles={['manager']}>
             <RestaurantOnboarding />
@@ -106,7 +110,7 @@ function AppContent() {
           </ProtectedRoute>
         } />
 
-        {/* Admin */}
+        {/* ── مدیر ارشد (Admin) ───────────────────── */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={
           <ProtectedRoute roles={['admin']}>
@@ -114,7 +118,7 @@ function AppContent() {
           </ProtectedRoute>
         } />
 
-        {/* 404 */}
+        {/* ── 404 ─────────────────────────────────── */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Calendar, CheckCircle } from 'lucide-react';
-import { SearchBar } from '../components/SearchBar';
-import { RestaurantCard } from '../components/RestaurantCard';
+import { SearchBar } from '../components/shared/SearchBar';
+import { RestaurantCard } from '../components/shared/RestaurantCard';
 import { RestaurantCardSkeleton } from '../components/shared/SkeletonLoader';
 import { getRestaurants } from '../services/restaurant.service';
 import type { Restaurant } from '../types';
