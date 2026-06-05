@@ -1,14 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Heart, User } from 'lucide-react';
+import { Home, Search, Heart, Bell, User } from 'lucide-react';
 
 export function BottomNav() {
   const location = useLocation();
 
   const navItems = [
-    { icon: Home, label: 'خانه', path: '/' },
-    { icon: Search, label: 'جستجو', path: '/search' },
-    { icon: Heart, label: 'علاقه‌مندی‌ها', path: '/favorites' },
-    { icon: User, label: 'پروفایل', path: '/customer-dashboard' },
+    { icon: Home,   label: 'خانه',           path: '/' },
+    { icon: Search, label: 'جستجو',           path: '/search' },
+    { icon: Heart,  label: 'علاقه‌مندی‌ها',  path: '/favorites' },
+    { icon: Bell,   label: 'اعلان‌ها',        path: '/notifications' },
+    { icon: User,   label: 'پروفایل',         path: '/customer-dashboard' },
   ];
 
   return (

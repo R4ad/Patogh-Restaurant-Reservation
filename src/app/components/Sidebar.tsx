@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, User, Settings, X, LayoutDashboard, Users, UtensilsCrossed, Clock } from 'lucide-react';
+import { Home, Calendar, User, Settings, X, LayoutDashboard, Users, UtensilsCrossed, Clock, Heart, Bell, PlusCircle } from 'lucide-react';
 
 interface SidebarProps {
   isManager?: boolean;
@@ -11,17 +11,19 @@ export function Sidebar({ isManager = false, isOpen = true, onClose }: SidebarPr
   const location = useLocation();
 
   const customerMenuItems = [
-    { icon: Home, label: 'داشبورد', path: '/customer-dashboard' },
-    { icon: Calendar, label: 'رزروهای من', path: '/customer-dashboard' },
-    { icon: User, label: 'پروفایل', path: '/customer-dashboard/profile' },
-    { icon: Settings, label: 'تنظیمات', path: '/customer-dashboard/settings' },
+    { icon: Home,     label: 'داشبورد',        path: '/customer-dashboard' },
+    { icon: Calendar, label: 'رزروهای من',      path: '/customer-dashboard' },
+    { icon: Heart,    label: 'علاقه‌مندی‌ها',   path: '/favorites' },
+    { icon: Bell,     label: 'اعلان‌ها',         path: '/notifications' },
+    { icon: User,     label: 'پروفایل',          path: '/customer-dashboard/profile' },
   ];
 
   const managerMenuItems = [
-    { icon: LayoutDashboard, label: 'داشبورد', path: '/manager-dashboard' },
-    { icon: Calendar, label: 'درخواست‌های رزرو', path: '/manager-dashboard' },
-    { icon: UtensilsCrossed, label: 'منو', path: '/manager-dashboard/menu' },
-    { icon: Clock, label: 'ساعات کاری', path: '/manager-dashboard/hours' },
+    { icon: LayoutDashboard, label: 'داشبورد',             path: '/manager-dashboard' },
+    { icon: Calendar,        label: 'درخواست‌های رزرو',    path: '/manager-dashboard' },
+    { icon: UtensilsCrossed, label: 'منو',                  path: '/manager-dashboard/menu' },
+    { icon: Clock,           label: 'ساعات کاری',           path: '/manager-dashboard/hours' },
+    { icon: PlusCircle,      label: 'ثبت رستوران جدید',    path: '/onboarding' },
   ];
 
   const menuItems = isManager ? managerMenuItems : customerMenuItems;
