@@ -3,6 +3,7 @@ import { Sidebar } from '../../components/Sidebar';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
 import { Plus, Trash2, Save } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface DaySchedule {
   day: string;
@@ -37,6 +38,12 @@ export function WorkingHoursSettings() {
     { id: '1', date: '2026-06-15', reason: 'تعطیلات تابستان' },
   ]);
   const [newClosedDate, setNewClosedDate] = useState({ date: '', reason: '' });
+  const [capacity, setCapacity] = useState({
+    capacity: '50',
+    reservationDuration: '90',
+    slotInterval: '30',
+    maxGuests: '8',
+  });
 
   const handleScheduleChange = (day: string, field: string, value: any) => {
     setSchedule(
@@ -61,7 +68,8 @@ export function WorkingHoursSettings() {
   };
 
   const handleSave = () => {
-    alert('تنظیمات با موفقیت ذخیره شد');
+    // endpoint برای ذخیره ساعات کاری هنوز از بک‌اند نگرفتیم
+    toast.success('تنظیمات با موفقیت ذخیره شد');
   };
 
   return (
@@ -199,25 +207,29 @@ export function WorkingHoursSettings() {
               <Input
                 label="ظرفیت کلی"
                 type="number"
-                defaultValue="50"
+                value={capacity.capacity}
+                onChange={(e) => setCapacity({ ...capacity, capacity: e.target.value })}
                 placeholder="تعداد نفرات"
               />
               <Input
                 label="مدت هر رزرو (دقیقه)"
                 type="number"
-                defaultValue="90"
+                value={capacity.reservationDuration}
+                onChange={(e) => setCapacity({ ...capacity, reservationDuration: e.target.value })}
                 placeholder="90"
               />
               <Input
                 label="فاصله بین رزروها (دقیقه)"
                 type="number"
-                defaultValue="30"
+                value={capacity.slotInterval}
+                onChange={(e) => setCapacity({ ...capacity, slotInterval: e.target.value })}
                 placeholder="30"
               />
               <Input
                 label="حداکثر نفرات هر رزرو"
                 type="number"
-                defaultValue="8"
+                value={capacity.maxGuests}
+                onChange={(e) => setCapacity({ ...capacity, maxGuests: e.target.value })}
                 placeholder="8"
               />
             </div>

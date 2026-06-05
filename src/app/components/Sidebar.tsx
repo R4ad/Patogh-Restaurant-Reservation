@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, User, Settings, X, LayoutDashboard, Users } from 'lucide-react';
+import { Home, Calendar, User, Settings, X, LayoutDashboard, Users, UtensilsCrossed, Clock } from 'lucide-react';
 
 interface SidebarProps {
   isManager?: boolean;
@@ -20,8 +20,8 @@ export function Sidebar({ isManager = false, isOpen = true, onClose }: SidebarPr
   const managerMenuItems = [
     { icon: LayoutDashboard, label: 'داشبورد', path: '/manager-dashboard' },
     { icon: Calendar, label: 'درخواست‌های رزرو', path: '/manager-dashboard' },
-    { icon: Users, label: 'مشتریان', path: '/manager-dashboard/customers' },
-    { icon: Settings, label: 'تنظیمات', path: '/manager-dashboard/settings' },
+    { icon: UtensilsCrossed, label: 'منو', path: '/manager-dashboard/menu' },
+    { icon: Clock, label: 'ساعات کاری', path: '/manager-dashboard/hours' },
   ];
 
   const menuItems = isManager ? managerMenuItems : customerMenuItems;

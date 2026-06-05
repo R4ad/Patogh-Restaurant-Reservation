@@ -7,7 +7,9 @@ import { Textarea } from '../../components/shared/Textarea';
 import { Select } from '../../components/shared/Select';
 import { FileUpload } from '../../components/shared/FileUpload';
 import { EmptyState } from '../../components/shared/EmptyState';
-import { Plus, Edit, Trash2, GripVertical, Coffee } from 'lucide-react';
+import { Plus, Edit, Trash2, GripVertical, Coffee, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { createMenuItem } from '../../services/restaurant.service';
 
 interface MenuItem {
   id: string;
@@ -55,12 +57,16 @@ const initialItems: MenuItem[] = [
 ];
 
 export function MenuManagement() {
+  const restaurantId = localStorage.getItem('restaurantId') ?? 'mock-restaurant-1';
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categories, setCategories] = useState(initialCategories);
   const [menuItems, setMenuItems] = useState(initialItems);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [isSavingItem, setIsSavingItem] = useState(false);
+  const [categoryName, setCategoryName] = useState('');
   const [itemForm, setItemForm] = useState({
     name: '',
     description: '',
@@ -96,28 +102,47 @@ export function MenuManagement() {
     setShowItemModal(true);
   };
 
-  const handleSaveItem = () => {
-    if (editingItem) {
-      setMenuItems(
-        menuItems.map((item) =>
-          item.id === editingItem.id
-            ? {
-                ...item,
-                ...itemForm,
-                tags: itemForm.tags.split(',').map((t) => t.trim()),
-              }
-            : item
-        )
-      );
-    } else {
-      const newItem: MenuItem = {
-        id: String(Date.now()),
-        ...itemForm,
-        tags: itemForm.tags.split(',').map((t) => t.trim()),
-      };
-      setMenuItems([...menuItems, newItem]);
+  const handleSaveItem = async () => {
+    if (!itemForm.name || !itemForm.price) {
+      toast.error('نام و قیمت آیتم الزامی است');
+      return;
     }
-    setShowItemModal(false);
+
+    setIsSavingItem(true);
+    try {
+      if (editingItem) {
+        // update endpoint نداریم — فقط local state
+        setMenuItems(
+          menuItems.map((item) =>
+            item.id === editingItem.id
+              ? { ...item, ...itemForm, tags: itemForm.tags.split(',').map((t) => t.trim()) }
+              : item
+          )
+        );
+        toast.success('آیتم ویرایش شد');
+      } else {
+        // آیتم جدید — به API می‌فرستیم
+        await createMenuItem({
+          RestaurantId: restaurantId,
+          Name: itemForm.name,
+          Description: itemForm.description,
+          Image: undefined,
+          Price: Number(itemForm.price),
+        });
+        const newItem: MenuItem = {
+          id: String(Date.now()),
+          ...itemForm,
+          tags: itemForm.tags.split(',').map((t) => t.trim()).filter(Boolean),
+        };
+        setMenuItems([...menuItems, newItem]);
+        toast.success('آیتم با موفقیت اضافه شد');
+      }
+      setShowItemModal(false);
+    } catch {
+      toast.error('خطا در ذخیره آیتم، دوباره تلاش کنید');
+    } finally {
+      setIsSavingItem(false);
+    }
   };
 
   const handleDeleteItem = (id: string) => {
@@ -279,11 +304,11 @@ export function MenuManagement() {
         size="lg"
         footer={
           <>
-            <Button variant="outline" onClick={() => setShowItemModal(false)}>
+            <Button variant="outline" onClick={() => setShowItemModal(false)} disabled={isSavingItem}>
               انصراف
             </Button>
-            <Button variant="primary" onClick={handleSaveItem}>
-              ذخیره
+            <Button variant="primary" onClick={handleSaveItem} disabled={isSavingItem} icon={isSavingItem ? Loader2 : undefined}>
+              {isSavingItem ? 'در حال ذخیره...' : 'ذخیره'}
             </Button>
           </>
         }
@@ -347,21 +372,36 @@ export function MenuManagement() {
       {/* Category Modal */}
       <Modal
         isOpen={showCategoryModal}
-        onClose={() => setShowCategoryModal(false)}
+        onClose={() => { setShowCategoryModal(false); setCategoryName(''); }}
         title="افزودن دسته‌بندی"
         footer={
           <>
-            <Button variant="outline" onClick={() => setShowCategoryModal(false)}>
+            <Button variant="outline" onClick={() => { setShowCategoryModal(false); setCategoryName(''); }}>
               انصراف
             </Button>
-            <Button variant="primary" onClick={() => setShowCategoryModal(false)}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                if (!categoryName.trim()) { toast.error('نام دسته‌بندی را وارد کنید'); return; }
+                setCategories((prev) => [...prev, { id: String(Date.now()), name: categoryName.trim(), visible: true }]);
+                setCategoryName('');
+                setShowCategoryModal(false);
+                toast.success('دسته‌بندی اضافه شد');
+              }}
+            >
               ذخیره
             </Button>
           </>
         }
       >
         <div className="space-y-4">
-          <Input label="نام دسته‌بندی" required placeholder="مثال: نوشیدنی‌های گرم" />
+          <Input
+            label="نام دسته‌بندی"
+            required
+            placeholder="مثال: نوشیدنی‌های گرم"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+          />
         </div>
       </Modal>
     </div>

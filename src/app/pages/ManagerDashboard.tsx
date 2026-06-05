@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { StatusBadge } from '../components/StatusBadge';
 import { Check, X, Calendar, Clock, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 const reservationRequests = [
   {
@@ -66,12 +67,14 @@ export function ManagerDashboard() {
     setRequests((prev) =>
       prev.map((req) => (req.id === id ? { ...req, status: 'approved' as const } : req))
     );
+    toast.success('رزرو تأیید شد ✓');
   };
 
   const handleReject = (id: string) => {
     setRequests((prev) =>
       prev.map((req) => (req.id === id ? { ...req, status: 'rejected' as const } : req))
     );
+    toast.error('رزرو رد شد');
   };
 
   const pendingCount = requests.filter((r) => r.status === 'pending').length;

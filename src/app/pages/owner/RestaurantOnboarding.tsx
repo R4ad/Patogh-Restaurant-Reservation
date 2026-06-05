@@ -5,7 +5,24 @@ import { Textarea } from '../../components/shared/Textarea';
 import { Select } from '../../components/shared/Select';
 import { Button } from '../../components/shared/Button';
 import { FileUpload } from '../../components/shared/FileUpload';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { createRestaurant } from '../../services/restaurant.service';
+
+// نگاشت مقادیر فرم به label فارسی
+const TYPE_LABELS: Record<string, string> = {
+  cafe: 'کافه',
+  restaurant: 'رستوران',
+  traditional: 'رستوران سنتی',
+  fastfood: 'فست‌فود',
+};
+
+const CITY_LABELS: Record<string, string> = {
+  tehran: 'تهران',
+  isfahan: 'اصفهان',
+  shiraz: 'شیراز',
+  mashhad: 'مشهد',
+};
 
 const steps = [
   'اطلاعات پایه',
@@ -41,12 +58,33 @@ export function RestaurantOnboarding() {
     cancellationPolicy: '',
   });
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      navigate('/owner-pending-approval');
+      return;
+    }
+
+    // آخرین step — ارسال به API
+    setIsSubmitting(true);
+    try {
+      await createRestaurant({
+        Name: formData.name,
+        Description: formData.description,
+        Location: `${CITY_LABELS[formData.city] ?? formData.city}، ${formData.address}`,
+        FoodType: TYPE_LABELS[formData.type] ?? formData.type,
+        StartTime: formData.startTime,
+        EndTime: formData.endTime,
+      });
+      // ذخیره یک ID موقت در localStorage برای استفاده در MenuManagement
+      localStorage.setItem('restaurantId', `rest-${Date.now()}`);
+      toast.success('رستوران با موفقیت ثبت شد — در انتظار تأیید ادمین');
+      navigate('/manager-dashboard');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'خطایی پیش آمد، دوباره تلاش کنید');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -386,10 +424,11 @@ export function RestaurantOnboarding() {
           <Button
             variant="primary"
             onClick={handleNext}
-            icon={currentStep === steps.length - 1 ? undefined : ChevronLeft}
+            disabled={isSubmitting}
+            icon={isSubmitting ? Loader2 : currentStep === steps.length - 1 ? undefined : ChevronLeft}
             iconPosition="left"
           >
-            {currentStep === steps.length - 1 ? 'ثبت و ارسال' : 'بعدی'}
+            {isSubmitting ? 'در حال ارسال...' : currentStep === steps.length - 1 ? 'ثبت و ارسال' : 'بعدی'}
           </Button>
         </div>
       </div>
