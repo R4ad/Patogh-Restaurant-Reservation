@@ -1,39 +1,55 @@
-# Dependencies
+# ─── Frontend ─────────────────────────────────────────────────────────────────
 node_modules/
 .pnpm-store/
-
-# npm lockfile (این پروژه از pnpm استفاده می‌کنه — lock file درست: pnpm-lock.yaml)
+pnpm-lock.yaml
 package-lock.json
 
-# Build output
 dist/
 dist-ssr/
 build/
+.vite/
+.vite-temp/
 
-# Environment variables (فقط .env.example رو commit کن)
+# ─── Backend (.NET) ───────────────────────────────────────────────────────────
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/*.suo
+
+back/**/logs/
+back/**/Uploads/
+
+# ─── Environment variables ────────────────────────────────────────────────────
 .env
 .env.local
 .env.*.local
+# back/.env is handled by back/patogh/.gitignore
 
-# Editor
-.vscode/
+# ─── Secrets / IDE ────────────────────────────────────────────────────────────
 .idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
 
-# OS
+# ─── Claude Code internal files ───────────────────────────────────────────────
+CLAUDE.md
+.claude/
+guidelines/
+
+# ─── OS ───────────────────────────────────────────────────────────────────────
 .DS_Store
+**/.DS_Store
 Thumbs.db
 
-# Logs
+# ─── Logs ─────────────────────────────────────────────────────────────────────
 *.log
 npm-debug.log*
 pnpm-debug.log*
 
-# Cache
+# ─── Misc ─────────────────────────────────────────────────────────────────────
 .cache/
 .parcel-cache/
 .turbo/
