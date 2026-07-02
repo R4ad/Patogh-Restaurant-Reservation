@@ -11,6 +11,8 @@ public class SendOtpResponseDto
 {
     public bool Success { get; set; }
     public string Message { get; set; } = string.Empty;
+    /// <summary>True when this phone number was not in the system before.</summary>
+    public bool IsNewUser { get; set; }
     // In production: never return the OTP. Only in Development for testing.
     public string? DevOtp { get; set; }
 }

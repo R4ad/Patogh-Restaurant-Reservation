@@ -1,0 +1,447 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=3cm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\usepackage{xepersian}
+\settextfont[Scale=1.1]{Vazirmatn}
+\setlatintextfont{Times New Roman}
+
+\definecolor{primaryorange}{RGB}{234, 88, 12}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+\definecolor{darkgray}{RGB}{80, 80, 80}
+\definecolor{successgreen}{RGB}{22, 163, 74}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryorange,
+    urlcolor=primaryorange
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{پروژه پاتوق — سامانه رزرو رستوران}
+\lhead{گزارش اسپرینت دوم}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+% \pagenumbering{persian}  % disabled for hyperref compatibility
+
+%% ─── صفحه عنوان ────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\LARGE\bfseries پروژه پاتوق (پاتوق)\\[0.5em]}
+{\Large\bfseries سامانه مدیریت و رزرو کافه و رستوران\\[2em]}
+\rule{\linewidth}{0.5mm}\\[1em]
+{\huge\bfseries\color{primaryorange} گزارش اسپرینت دوم}\\[0.5em]
+{\Large توسعه قابلیت‌های اصلی}\\[1em]
+\rule{\linewidth}{0.5mm}\\[2em]
+{\large درس: طراحی نرم‌افزار\\[0.5em]}
+{\large مدت اسپرینت: ۲ هفته\\[0.5em]}
+{\large تاریخ تهیه: تیر ۱۴۰۵}\\[3em]
+\vfill
+{\normalsize\color{darkgray}
+این گزارش پوشش‌دهی اسپرینت دوم پروژه پاتوق را شرح می‌دهد که
+در آن قابلیت‌های اصلی سیستم شامل مدیریت رستوران، منو، میز،
+رزرو، علاقه‌مندی‌ها و داشبوردهای سه نقش پیاده‌سازی شدند.}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+%% ─── ۱. هدف اسپرینت ────────────────────────────────────────────────────────
+\section{هدف اسپرینت}
+
+پس از اسپرینت اول که در آن زیرساخت احراز هویت پایه‌ریزی شد، اسپرینت دوم بر توسعه
+کامل قابلیت‌های اصلی سیستم تمرکز داشت. در پایان این اسپرینت سیستم باید یک
+\lr{MVP} (حداقل محصول قابل ارائه) کامل داشته باشد.
+
+\subsection{اهداف اصلی}
+\begin{itemize}[rightmargin=0.5cm]
+  \item پیاده‌سازی \lr{CRUD} کامل رستوران (ایجاد، مشاهده، ویرایش، تأیید)
+  \item مدیریت منو و میزهای رستوران
+  \item سیستم رزرو کامل (ایجاد، تأیید، رد، لغو)
+  \item قابلیت علاقه‌مندی‌ها
+  \item داشبورد برای هر سه نقش
+  \item اتصال تمام صفحات فرانت‌اند به \lr{API} واقعی
+\end{itemize}
+
+\newpage
+
+%% ─── ۲. Sprint Backlog ─────────────────────────────────────────────────────
+\section{\lr{Sprint Backlog}}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{آیتم} & \textbf{دسته} & \textbf{مسئول} & \textbf{وضعیت} \\
+\hline
+\endhead
+ایجاد رستوران & رستوران & بک‌اند & انجام شد \\
+\hline
+ویرایش رستوران & رستوران & بک‌اند & انجام شد \\
+\hline
+لیست رستوران‌ها (عمومی) & رستوران & بک‌اند & انجام شد \\
+\hline
+جزئیات رستوران & رستوران & بک‌اند & انجام شد \\
+\hline
+تأیید رستوران (ادمین) & رستوران & بک‌اند & انجام شد \\
+\hline
+ایجاد آیتم منو & منو & بک‌اند & انجام شد \\
+\hline
+ویرایش آیتم منو & منو & بک‌اند & انجام شد \\
+\hline
+حذف آیتم منو & منو & بک‌اند & انجام شد \\
+\hline
+لیست منو رستوران & منو & بک‌اند & انجام شد \\
+\hline
+ایجاد میز & میز & بک‌اند & انجام شد \\
+\hline
+حذف میز & میز & بک‌اند & انجام شد \\
+\hline
+لیست میزهای رستوران & میز & بک‌اند & انجام شد \\
+\hline
+ایجاد رزرو & رزرو & بک‌اند & انجام شد \\
+\hline
+تأیید رزرو & رزرو & بک‌اند & انجام شد \\
+\hline
+رد رزرو & رزرو & بک‌اند & انجام شد \\
+\hline
+لغو رزرو (مشتری) & رزرو & بک‌اند & انجام شد \\
+\hline
+لغو رزرو (مدیر) & رزرو & بک‌اند & انجام شد \\
+\hline
+لیست رزروهای مشتری & رزرو & بک‌اند & انجام شد \\
+\hline
+لیست رزروهای رستوران & رزرو & بک‌اند & انجام شد \\
+\hline
+میزهای در دسترس & رزرو & بک‌اند & انجام شد \\
+\hline
+افزودن علاقه‌مندی & علاقه‌مندی & بک‌اند & انجام شد \\
+\hline
+حذف علاقه‌مندی & علاقه‌مندی & بک‌اند & انجام شد \\
+\hline
+لیست علاقه‌مندی‌ها & علاقه‌مندی & بک‌اند & انجام شد \\
+\hline
+آپلود تصویر & رسانه & بک‌اند & انجام شد \\
+\hline
+آمار مدیر رستوران & آمار & بک‌اند & انجام شد \\
+\hline
+آمار ادمین & آمار & بک‌اند & انجام شد \\
+\hline
+داشبورد مشتری & داشبورد & فرانت‌اند & انجام شد \\
+\hline
+داشبورد مدیر رستوران & داشبورد & فرانت‌اند & انجام شد \\
+\hline
+پنل مدیر ارشد & داشبورد & فرانت‌اند & انجام شد \\
+\hline
+فرم رزرو & رزرو & فرانت‌اند & انجام شد \\
+\hline
+صفحه علاقه‌مندی‌ها & علاقه‌مندی & فرانت‌اند & انجام شد \\
+\hline
+مدیریت منو & منو & فرانت‌اند & انجام شد \\
+\hline
+مدیریت میز & میز & فرانت‌اند & انجام شد \\
+\hline
+ثبت رستوران (چندمرحله‌ای) & رستوران & فرانت‌اند & انجام شد \\
+\hline
+تنظیم ساعات کاری & ساعات & فرانت‌اند & انجام شد \\
+\hline
+\end{longtable}
+
+\newpage
+
+%% ─── ۳. بک‌اند: رستوران ─────────────────────────────────────────────────────
+\section{بک‌اند: مدیریت رستوران}
+
+\subsection{Endpoint‌ها}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{متد} & \textbf{مسیر} & \textbf{توضیح} & \textbf{دسترسی} \\
+\hline
+\endhead
+\lr{POST} & \lr{/api/restaurants} & ایجاد رستوران جدید & مدیر رستوران \\
+\hline
+\lr{PUT} & \lr{/api/restaurants/\{id\}} & ویرایش رستوران & مدیر رستوران \\
+\hline
+\lr{GET} & \lr{/api/restaurants} & لیست رستوران‌های تأییدشده & عمومی \\
+\hline
+\lr{GET} & \lr{/api/restaurants/\{id\}} & جزئیات رستوران & عمومی \\
+\hline
+\lr{GET} & \lr{/api/restaurants/my} & رستوران‌های مدیر & مدیر رستوران \\
+\hline
+\lr{POST} & \lr{/api/admin/restaurants/\{id\}/approve} & تأیید رستوران & ادمین \\
+\hline
+\lr{GET} & \lr{/api/admin/restaurants} & لیست همه (ادمین) & ادمین \\
+\hline
+\end{longtable}
+
+\subsection{قانون تأیید}
+رستوران پس از ثبت توسط مدیر رستوران، وضعیت \lr{Pending} دارد.
+فقط پس از تأیید توسط ادمین، در لیست عمومی ظاهر می‌شود.
+این قانون در \lr{GetRestaurantsHandler} با فیلتر \lr{Status == Approved} پیاده‌سازی شده است.
+
+\newpage
+
+%% ─── ۴. بک‌اند: منو و میز ──────────────────────────────────────────────────
+\section{بک‌اند: مدیریت منو و میز}
+
+\subsection{Endpoint‌های منو}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{متد} & \textbf{مسیر} & \textbf{توضیح} & \textbf{دسترسی} \\
+\hline
+\endhead
+\lr{POST} & \lr{/api/menu} & ایجاد آیتم منو & مدیر رستوران \\
+\hline
+\lr{PUT} & \lr{/api/menu/\{id\}} & ویرایش آیتم منو & مدیر رستوران \\
+\hline
+\lr{DELETE} & \lr{/api/menu/\{id\}} & حذف آیتم منو & مدیر رستوران \\
+\hline
+\lr{GET} & \lr{/api/menu/restaurant/\{restaurantId\}} & منوی رستوران & عمومی \\
+\hline
+\end{longtable}
+
+\subsection{Endpoint‌های میز}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{متد} & \textbf{مسیر} & \textbf{توضیح} & \textbf{دسترسی} \\
+\hline
+\endhead
+\lr{POST} & \lr{/api/tables} & ایجاد میز جدید & مدیر رستوران \\
+\hline
+\lr{DELETE} & \lr{/api/tables/\{id\}} & حذف میز & مدیر رستوران \\
+\hline
+\lr{GET} & \lr{/api/tables/restaurant/\{restaurantId\}} & لیست میزها & مدیر رستوران \\
+\hline
+\end{longtable}
+
+\newpage
+
+%% ─── ۵. بک‌اند: سیستم رزرو ─────────────────────────────────────────────────
+\section{بک‌اند: سیستم رزرو}
+
+\subsection{قانون کسب‌وکار}
+\begin{itemize}[rightmargin=0.5cm]
+  \item مدت رزرو ثابت ۲ ساعته است: \lr{EndTime = StartTime + 2 hours}
+  \item میز انتخاب‌شده باید در بازه زمانی درخواستی در دسترس باشد
+  \item رزرو جدید با وضعیت \lr{Pending} ثبت می‌شود
+  \item مشتری می‌تواند تعداد مهمانان متفاوت از ظرفیت میز (تا سقف) داشته باشد
+\end{itemize}
+
+\subsection{چرخه عمر رزرو}
+\begin{enumerate}[rightmargin=0.5cm]
+  \item \textbf{Pending}: مشتری رزرو ثبت کرده، در انتظار تأیید مدیر رستوران
+  \item \textbf{Confirmed}: مدیر رستوران رزرو را تأیید کرد
+  \item \textbf{Rejected}: مدیر رستوران رزرو را رد کرد
+  \item \textbf{Cancelled}: مشتری یا مدیر رستوران رزرو را لغو کرد
+\end{enumerate}
+
+\subsection{Endpoint‌های رزرو}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{متد} & \textbf{مسیر} & \textbf{توضیح} & \textbf{دسترسی} \\
+\hline
+\endhead
+\lr{POST} & \lr{/api/reservations} & ایجاد رزرو جدید & مشتری \\
+\hline
+\lr{GET} & \lr{/api/reservations/\{id\}} & جزئیات رزرو & مشتری/مدیر \\
+\hline
+\lr{GET} & \lr{/api/reservations/my} & رزروهای مشتری & مشتری \\
+\hline
+\lr{DELETE} & \lr{/api/reservations/\{id\}} & لغو توسط مشتری & مشتری \\
+\hline
+\lr{GET} & \lr{/api/reservations/restaurant/\{id\}} & رزروهای رستوران & مدیر رستوران \\
+\hline
+\lr{PUT} & \lr{/api/reservations/\{id\}/confirm} & تأیید رزرو & مدیر رستوران \\
+\hline
+\lr{PUT} & \lr{/api/reservations/\{id\}/reject} & رد رزرو & مدیر رستوران \\
+\hline
+\lr{PUT} & \lr{/api/reservations/\{id\}/cancel} & لغو توسط مدیر & مدیر رستوران \\
+\hline
+\end{longtable}
+
+\subsection{پیدا کردن میزهای در دسترس}
+کوئری \lr{GetAvailableTableQuery} میزهایی را برمی‌گرداند که:
+\begin{itemize}[rightmargin=0.5cm]
+  \item به رستوران درخواستی تعلق دارند
+  \item ظرفیت کافی برای تعداد مهمانان دارند
+  \item در بازه زمانی مورد نظر رزرو تأییدشده‌ای ندارند
+\end{itemize}
+
+\newpage
+
+%% ─── ۶. بک‌اند: علاقه‌مندی‌ها و رسانه ──────────────────────────────────────
+\section{بک‌اند: علاقه‌مندی‌ها و آپلود رسانه}
+
+\subsection{علاقه‌مندی‌ها}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{متد} & \textbf{مسیر} & \textbf{توضیح} & \textbf{دسترسی} \\
+\hline
+\endhead
+\lr{POST} & \lr{/api/favorites} & افزودن به علاقه‌مندی‌ها & مشتری \\
+\hline
+\lr{DELETE} & \lr{/api/favorites/\{restaurantId\}} & حذف از علاقه‌مندی‌ها & مشتری \\
+\hline
+\lr{GET} & \lr{/api/favorites} & لیست علاقه‌مندی‌ها & مشتری \\
+\hline
+\end{longtable}
+
+\subsection{آپلود رسانه}
+\lr{MediaController} با استفاده از \lr{IFormFile} تصاویر را دریافت و در سرور ذخیره می‌کند.
+\lr{URL} تصویر آپلودشده برای استفاده در تصویر رستوران یا آیتم منو بازگردانده می‌شود.
+
+\newpage
+
+%% ─── ۷. فرانت‌اند ──────────────────────────────────────────────────────────
+\section{پیاده‌سازی فرانت‌اند}
+
+\subsection{صفحات مشتری}
+
+\begin{longtable}{|r|r|r|}
+\hline
+\textbf{مسیر} & \textbf{صفحه} & \textbf{توضیح} \\
+\hline
+\endhead
+\lr{/} & \lr{HomePage} & صفحه اصلی با جستجو و رستوران‌های برتر \\
+\hline
+\lr{/search} & \lr{SearchResults} & نتایج جستجو با فیلتر \\
+\hline
+\lr{/restaurant/:id} & \lr{RestaurantDetails} & جزئیات رستوران و دکمه رزرو \\
+\hline
+\lr{/reservation/:id} & \lr{ReservationForm} & فرم رزرو میز \\
+\hline
+\lr{/reservation-confirmation} & \lr{ReservationConfirmation} & تأیید نهایی رزرو \\
+\hline
+\lr{/customer-dashboard} & \lr{CustomerDashboard} & داشبورد رزروهای مشتری \\
+\hline
+\lr{/favorites} & \lr{Favorites} & لیست رستوران‌های مورد علاقه \\
+\hline
+\lr{/notifications} & \lr{Notifications} & اعلان‌ها \\
+\hline
+\lr{/customer-dashboard/profile} & \lr{Profile} & پروفایل مشتری \\
+\hline
+\lr{/support} & \lr{Support} & صفحه پشتیبانی \\
+\hline
+\end{longtable}
+
+\subsection{صفحات مدیر رستوران}
+
+\begin{longtable}{|r|r|r|}
+\hline
+\textbf{مسیر} & \textbf{صفحه} & \textbf{توضیح} \\
+\hline
+\endhead
+\lr{/onboarding} & \lr{RestaurantOnboarding} & ثبت رستوران چندمرحله‌ای \\
+\hline
+\lr{/manager-dashboard} & \lr{ManagerDashboard} & داشبورد مدیر رستوران \\
+\hline
+\lr{/manager-dashboard/menu} & \lr{MenuManagement} & مدیریت منوی رستوران \\
+\hline
+\lr{/manager-dashboard/hours} & \lr{WorkingHoursSettings} & تنظیم ساعات کاری \\
+\hline
+\lr{/manager-dashboard/profile} & \lr{ManagerProfile} & پروفایل مدیر رستوران \\
+\hline
+\end{longtable}
+
+\subsection{صفحات مدیر ارشد}
+
+\begin{longtable}{|r|r|r|}
+\hline
+\textbf{مسیر} & \textbf{صفحه} & \textbf{توضیح} \\
+\hline
+\endhead
+\lr{/admin/login} & \lr{AdminLogin} & ورود مدیر ارشد \\
+\hline
+\lr{/admin} & \lr{AdminDashboard} & پنل مدیریت: تأیید رستوران‌ها، مدیریت کاربران \\
+\hline
+\lr{/admin/profile} & \lr{AdminProfile} & پروفایل مدیر ارشد \\
+\hline
+\end{longtable}
+
+\subsection{فرم رزرو (ReservationForm)}
+
+صفحه رزرو میز شامل مراحل زیر است:
+\begin{enumerate}[rightmargin=0.5cm]
+  \item انتخاب تاریخ با تقویم شمسی
+  \item انتخاب ساعت شروع از میان ساعات کاری رستوران
+  \item وارد کردن تعداد مهمانان
+  \item نمایش میزهای در دسترس و انتخاب میز
+  \item وارد کردن نام و شماره تماس (در صورت تفاوت با حساب کاربری)
+  \item تأیید و ارسال رزرو
+\end{enumerate}
+
+\subsection{داشبورد مدیر رستوران (ManagerDashboard)}
+
+داشبورد مدیر رستوران شامل:
+\begin{itemize}[rightmargin=0.5cm]
+  \item آمار کلی: تعداد رزروها، تأییدشده‌ها، در انتظار، لغوشده‌ها
+  \item لیست رزروهای امروز با امکان تأیید/رد
+  \item نمودار وضعیت رزروها با \lr{Recharts}
+  \item منوی ناوبری به صفحات مدیریت منو، میز و ساعات کاری
+\end{itemize}
+
+\subsection{ثبت رستوران چندمرحله‌ای (RestaurantOnboarding)}
+
+صفحه ثبت رستوران (\lr{/onboarding}) یک فرم چندمرحله‌ای است با مراحل:
+\begin{enumerate}[rightmargin=0.5cm]
+  \item اطلاعات پایه: نام، توضیح
+  \item موقعیت: آدرس، استان/شهر
+  \item نوع غذا (\lr{FoodType})
+  \item ساعات کاری اولیه
+  \item آپلود تصویر اصلی رستوران
+  \item مرور و تأیید نهایی
+\end{enumerate}
+
+\newpage
+
+%% ─── ۸. بازبینی ─────────────────────────────────────────────────────────────
+\section{بازبینی و گذر اسپرینت}
+
+\subsection{Sprint Review}
+\begin{itemize}[rightmargin=0.5cm]
+  \item تمام ۳۵ آیتم بک‌لاگ با موفقیت انجام شدند
+  \item تمام \lr{Endpoint}های بک‌اند از طریق \lr{Swagger} تست شدند
+  \item صفحات فرانت‌اند به \lr{API} واقعی وصل شدند
+  \item جریان کامل رزرو (از جستجو تا تأیید) کار می‌کند
+\end{itemize}
+
+\subsection{Sprint Retrospective}
+
+\textbf{چه چیزی خوب بود:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item معماری \lr{CQRS} کدها را سازماندهی و تست‌پذیر نگه داشت
+  \item پیاده‌سازی موازی بک‌اند و فرانت‌اند کارایی را افزایش داد
+  \item استفاده از \lr{FluentValidation} خطاهای ورودی را به خوبی مدیریت کرد
+\end{itemize}
+
+\textbf{چه چیزی می‌توانست بهتر باشد:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item اتصال تقویم شمسی در فرم رزرو نیاز به کار بیشتری داشت
+  \item \lr{TableManagement} به اسپرینت سوم منتقل شد
+\end{itemize}
+
+\textbf{اقدامات بهبود:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item اضافه کردن تست‌های یکپارچه‌سازی برای سیستم رزرو
+  \item بهبود مدیریت خطا در سمت فرانت‌اند
+\end{itemize}
+
+\end{document}

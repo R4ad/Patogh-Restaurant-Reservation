@@ -43,9 +43,10 @@ public class ConsoleSmsSender : ISmsSender
         Console.ResetColor();
         Console.WriteLine();
 
+        // Log delivery fact only — never log OTP content in structured logs.
+        // Structured logs may be shipped to external systems (ELK, Seq, etc.).
         _logger.LogInformation(
-            "[CONSOLE SMS] To: {Phone} | Message: {Message}",
-            phoneNumber, message);
+            "[CONSOLE SMS] SMS dispatched to {Phone}.", phoneNumber);
 
         return Task.CompletedTask;
     }

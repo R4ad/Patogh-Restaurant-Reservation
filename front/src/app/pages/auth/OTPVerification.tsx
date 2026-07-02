@@ -12,6 +12,7 @@ export function OTPVerification() {
   const { verifyOTP } = useAuth();
 
   const phoneNumber: string = location.state?.phone ?? '';
+  const isNewUserFromState: boolean = location.state?.isNewUser ?? false;
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,8 +34,12 @@ export function OTPVerification() {
     setError('');
     setIsLoading(true);
     try {
-      // verifyOTP در AuthContext، redirect رو هم انجام می‌ده
-      await verifyOTP({ PhoneNumber: phoneNumber, Code: otp });
+      const { hasIncompleteProfile } = await verifyOTP({ PhoneNumber: phoneNumber, Code: otp });
+      // پروفایل ناقص (رمز ندارد، چه کاربر جدید چه قدیمی) → تکمیل پروفایل
+      // پروفایل کامل → AuthContext به داشبورد مناسب redirect کرده است
+      if (hasIncompleteProfile || isNewUserFromState) {
+        navigate('/complete-profile', { replace: true });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'کد وارد شده اشتباه است');
       setIsLoading(false);

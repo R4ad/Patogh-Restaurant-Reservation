@@ -43,12 +43,16 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDt
                 x => x.PhoneNumber == request.PhoneNumber,
                 cancellationToken);
 
+        // Deliberately use the same message for both "user not found" and "wrong password"
+        // to prevent user enumeration attacks.
+        const string invalidCredentials = "شماره موبایل یا رمز عبور اشتباه است.";
+
         if (user is null)
-            throw new UnauthorizedDomainException();
+            throw new UnauthorizedDomainException(invalidCredentials);
 
         if (string.IsNullOrEmpty(user.PasswordHash) ||
             !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
-            throw new UnauthorizedDomainException();
+            throw new UnauthorizedDomainException(invalidCredentials);
 
         var accessToken = _jwtTokenService.GenerateAccessToken(user);
         var ip = _http.HttpContext?.Connection.RemoteIpAddress?.ToString();

@@ -25,21 +25,27 @@ public class MockOtpService : IOtpService
         _devCode = settings.Value.DevOtpCode;
     }
 
-    public Task SendOtpAsync(string phoneNumber)
+    public Task<string> SendOtpAsync(string phoneNumber)
     {
+        // Print dev code to console only — NOT to structured logs which may be shipped externally.
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine($"  [MOCK OTP] Phone: {phoneNumber}  Code: {_devCode}  (DEVELOPMENT ONLY)");
+        Console.ResetColor();
+
         _logger.LogWarning(
-            "[MOCK OTP] ⚠ Development mode — use '{Code}' to verify {Phone}. " +
-            "This service MUST NOT run in Production.",
-            _devCode, phoneNumber);
-        return Task.CompletedTask;
+            "[MOCK OTP] ⚠ Development-only OTP sent for {Phone}. " +
+            "MockOtpService MUST NOT run in Production.",
+            phoneNumber);
+        return Task.FromResult(_devCode);
     }
 
     public Task<bool> VerifyOtpAsync(string phoneNumber, string code)
     {
         var isValid = code == _devCode;
+        // Log result only — do NOT log the submitted code itself.
         _logger.LogInformation(
-            "[MOCK OTP] Verify {Code} for {Phone}: {Result}",
-            code, phoneNumber, isValid ? "ACCEPTED" : "REJECTED");
+            "[MOCK OTP] Verify attempt for {Phone}: {Result}",
+            phoneNumber, isValid ? "ACCEPTED" : "REJECTED");
         return Task.FromResult(isValid);
     }
 }

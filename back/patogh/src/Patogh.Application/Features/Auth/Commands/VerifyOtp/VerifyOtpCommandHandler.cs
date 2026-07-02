@@ -54,6 +54,11 @@ public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, LoginRe
         if (user is null)
             throw new NotFoundException("User", request.PhoneNumber);
 
+        // HasIncompleteProfile: user exists but has never set a password.
+        // This differs from "is new user" — a returning user who skipped profile completion
+        // also has an empty PasswordHash and should be redirected to /complete-profile.
+        var hasIncompleteProfile = string.IsNullOrEmpty(user.PasswordHash);
+
         if (request.RequestedRole == "RestaurantOwner" &&
             user.Role == UserRole.Customer)
         {
@@ -69,12 +74,13 @@ public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, LoginRe
 
         return new LoginResponseDto
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken.Token,
-            PhoneNumber = user.PhoneNumber,
-            Role = user.Role.ToString(),
-            UserId = user.Id,
-            ExpiresInMinutes = _jwtSettings.ExpirationInMinutes
+            AccessToken      = accessToken,
+            RefreshToken     = refreshToken.Token,
+            PhoneNumber      = user.PhoneNumber,
+            Role             = user.Role.ToString(),
+            UserId           = user.Id,
+            ExpiresInMinutes = _jwtSettings.ExpirationInMinutes,
+            HasIncompleteProfile = hasIncompleteProfile,
         };
     }
 }

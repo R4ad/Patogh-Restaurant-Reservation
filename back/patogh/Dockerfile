@@ -28,14 +28,15 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN addgroup --system --gid 1001 appgroup && \
     adduser --system --uid 1001 --ingroup appgroup appuser
 
-RUN mkdir -p /app/Uploads /app/logs && chown -R appuser:appgroup /app
+RUN mkdir -p /app/Uploads /app/logs /app/wwwroot /app/.aspnet/DataProtection-Keys && \
+    chown -R appuser:appgroup /app
 
 COPY --from=build /app/publish .
 
 USER appuser
 
-ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_HTTP_PORTS=8080
 
 EXPOSE 8080
 

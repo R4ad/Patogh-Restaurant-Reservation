@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
   ShieldCheck, LogOut, MapPin, Clock, CheckCircle, XCircle,
-  Loader2, Building2, RefreshCw, BarChart2,
+  Loader2, Building2, RefreshCw, BarChart2, User,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -86,13 +87,22 @@ export function AdminDashboard() {
               <p className="text-xs text-muted-foreground">پنل مدیر ارشد</p>
             </div>
           </div>
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors text-sm"
-          >
-            <LogOut className="w-4 h-4" />
-            خروج
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin/profile"
+              className="flex items-center gap-2 px-4 py-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors text-sm"
+            >
+              <User className="w-4 h-4" />
+              پروفایل
+            </Link>
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors text-sm"
+            >
+              <LogOut className="w-4 h-4" />
+              خروج
+            </button>
+          </div>
         </div>
       </header>
 

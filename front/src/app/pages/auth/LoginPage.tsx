@@ -39,15 +39,13 @@ export function LoginPage() {
       if (mode === 'password') {
         await login({ PhoneNumber: data.phone, Password: data.password });
       } else {
-        await sendOTP({ PhoneNumber: data.phone });
-        navigate('/otp-verify', { state: { phone: data.phone } });
+        const res = await sendOTP({ PhoneNumber: data.phone });
+        navigate('/otp-verify', {
+          state: { phone: data.phone, isNewUser: res.isNewUser ?? false },
+        });
       }
     } catch (err) {
       localStorage.removeItem('userRole');
-      if (err instanceof Error && err.message === 'USER_NOT_FOUND') {
-        navigate('/register', { state: { phone: data.phone } });
-        return;
-      }
       setServerError(
         err instanceof Error ? err.message : 'مشکلی پیش آمد، دوباره تلاش کنید'
       );

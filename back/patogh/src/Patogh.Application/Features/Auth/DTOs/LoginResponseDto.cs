@@ -16,4 +16,11 @@ public class LoginResponseDto
 
     /// <summary>Access token expiry in minutes.</summary>
     public int ExpiresInMinutes { get; set; }
+
+    /// <summary>
+    /// True when this user has no password set yet (OTP-only account, profile incomplete).
+    /// Distinct from "IsNewUser" — a returning user who skipped profile completion also gets true.
+    /// Frontend should redirect such users to /complete-profile.
+    /// </summary>
+    public bool HasIncompleteProfile { get; set; }
 }

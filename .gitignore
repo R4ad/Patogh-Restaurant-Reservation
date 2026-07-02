@@ -49,6 +49,12 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 
+# ─── LaTeX build artifacts ────────────────────────────────────────────────────
+reports/*.aux
+reports/*.toc
+reports/*.out
+reports/*.log
+
 # ─── Misc ─────────────────────────────────────────────────────────────────────
 .cache/
 .parcel-cache/

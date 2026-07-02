@@ -6,8 +6,10 @@
 export function formatJalaliDate(isoDate: string): string {
   if (!isoDate) return '—';
   try {
-    // T00:00:00 جلوگیری از خطای timezone
-    const date = new Date(isoDate + 'T00:00:00');
+    const date = isoDate.includes('T')
+      ? new Date(isoDate)
+      : new Date(isoDate + 'T00:00:00');
+    if (isNaN(date.getTime())) return '—';
     return new Intl.DateTimeFormat('fa-IR', {
       calendar: 'persian',
       year:  'numeric',

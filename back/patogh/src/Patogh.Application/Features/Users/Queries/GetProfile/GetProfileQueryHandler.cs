@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Patogh.Application.Features.Users.DTOs;
 using Patogh.Application.Interfaces;
@@ -23,22 +23,28 @@ public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, UserProfi
         GetProfileQuery request,
         CancellationToken cancellationToken)
     {
+        var userId = _currentUser.UserId;
+
         var user = await _context.Users
             .AsNoTracking()
-            .Where(u => u.Id == _currentUser.UserId)
+            .Where(u => u.Id == userId)
             .Select(u => new UserProfileDto
             {
-                Id = u.Id,
-                PhoneNumber = u.PhoneNumber,
-                Role = u.Role.ToString(),
-                MemberSince = u.CreatedAt,
+                Id            = u.Id,
+                PhoneNumber   = u.PhoneNumber,
+                Role          = u.Role.ToString(),
+                DisplayName   = u.DisplayName,
+                AvatarUrl     = u.AvatarUrl,
+                MemberSince   = u.CreatedAt,
                 TotalReservations = _context.Reservations
-                    .Count(r => r.CustomerId == u.Id)
+                    .Count(r => r.CustomerId == u.Id),
+                FavoritesCount = _context.UserFavorites
+                    .Count(f => f.UserId == u.Id),
             })
             .FirstOrDefaultAsync(cancellationToken);
 
         if (user is null)
-            throw new NotFoundException("User", _currentUser.UserId);
+            throw new NotFoundException("User", userId);
 
         return user;
     }

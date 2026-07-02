@@ -9,5 +9,5 @@ public class RestaurantImage : BaseEntity
 
     // Navigation
     public Restaurant Restaurant { get; set; } = null!;
-    public MediaAsset MediaAsset { get; set; } = null!;
+    public MediaAsset? MediaAsset { get; set; }
 }

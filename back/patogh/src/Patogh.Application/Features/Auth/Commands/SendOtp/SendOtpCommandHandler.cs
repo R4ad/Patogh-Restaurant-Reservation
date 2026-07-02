@@ -13,11 +13,6 @@ public class SendOtpCommandHandler : IRequestHandler<SendOtpCommand, SendOtpResp
     private readonly IOtpService _otpService;
     private readonly IHostEnvironment _env;
 
-    // The magic OTP accepted by MockOtpService is defined here as a constant
-    // so SendOtpCommandHandler and MockOtpService use the same value.
-    // If you change MockOtpService's accepted code, change this too.
-    internal const string DevMagicOtp = "123456";
-
     public SendOtpCommandHandler(
         IApplicationDbContext context,
         IOtpService otpService,
@@ -37,8 +32,10 @@ public class SendOtpCommandHandler : IRequestHandler<SendOtpCommand, SendOtpResp
                 x => x.PhoneNumber == request.PhoneNumber,
                 cancellationToken);
 
+        var isNewUser = false;
         if (user is null)
         {
+            isNewUser = true;
             user = new User
             {
                 PhoneNumber = request.PhoneNumber,
@@ -49,20 +46,19 @@ public class SendOtpCommandHandler : IRequestHandler<SendOtpCommand, SendOtpResp
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        await _otpService.SendOtpAsync(request.PhoneNumber);
+        var generatedOtp = await _otpService.SendOtpAsync(request.PhoneNumber);
 
         var response = new SendOtpResponseDto
         {
-            Success = true,
-            Message = $"کد تأیید به شماره {request.PhoneNumber} ارسال شد."
+            Success   = true,
+            IsNewUser = isNewUser,
+            Message   = $"کد تأیید به شماره {request.PhoneNumber} ارسال شد."
         };
 
-        // DevOtp is only exposed when running with Development environment.
-        // This tells the developer which code to use (MockOtpService always
-        // accepts DevMagicOtp; the value is printed to the console too).
-        // In Production, DevOtp remains null and is never serialized.
+        // Expose the actual generated OTP only in Development so Swagger/Postman
+        // testers can copy it without a real phone.
         if (_env.IsDevelopment())
-            response.DevOtp = DevMagicOtp;
+            response.DevOtp = generatedOtp;
 
         return response;
     }

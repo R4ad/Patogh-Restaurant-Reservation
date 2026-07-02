@@ -24,6 +24,7 @@ export function Sidebar({ isManager = false, isOpen = true, onClose }: SidebarPr
     { icon: UtensilsCrossed, label: 'منو',                  path: '/manager-dashboard/menu' },
     { icon: Clock,           label: 'ساعات کاری',           path: '/manager-dashboard/hours' },
     { icon: PlusCircle,      label: 'ثبت رستوران جدید',    path: '/onboarding' },
+    { icon: User,            label: 'پروفایل',              path: '/manager-dashboard/profile' },
   ];
 
   const menuItems = isManager ? managerMenuItems : customerMenuItems;

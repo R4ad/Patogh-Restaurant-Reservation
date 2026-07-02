@@ -36,7 +36,7 @@ interface AuthContextValue {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (data: LoginRequest) => Promise<void>;
-  verifyOTP: (data: VerifyOTPRequest) => Promise<void>;
+  verifyOTP: (data: VerifyOTPRequest) => Promise<{ hasIncompleteProfile: boolean }>;
   adminLogin: (data: AdminLoginRequest) => Promise<void>;
   logout: () => void;
 }
@@ -57,9 +57,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = getStoredToken();
     const role = getStoredRole();
     const phoneNumber = localStorage.getItem('phoneNumber');
+    const userId = localStorage.getItem('userId') ?? undefined;
 
     if (token && role) {
-      setUser({ accessToken: token, PhoneNumber: phoneNumber ?? '', role });
+      setUser({ accessToken: token, PhoneNumber: phoneNumber ?? '', role, UserId: userId });
     }
     setIsLoading(false);
   }, []);
@@ -84,7 +85,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const role = getStoredRole() ?? 'customer';
     const authUser: AuthUser = { ...res, role };
     setUser(authUser);
-    redirectByRole(role);
+    // پروفایل ناقص → caller به /complete-profile هدایت می‌کند
+    // پروفایل کامل → redirect بر اساس role
+    if (!res.hasIncompleteProfile) {
+      redirectByRole(role);
+    }
+    return { hasIncompleteProfile: res.hasIncompleteProfile ?? false };
   }, [redirectByRole]);
 
   const adminLogin = useCallback(async (data: AdminLoginRequest) => {

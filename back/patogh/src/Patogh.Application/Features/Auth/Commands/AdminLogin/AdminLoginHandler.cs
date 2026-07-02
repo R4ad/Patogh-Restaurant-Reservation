@@ -27,18 +27,22 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Login
         AdminLoginCommand request,
         CancellationToken cancellationToken)
     {
+        const string invalidCredentials = "شماره موبایل یا رمز عبور اشتباه است.";
+
         var user = await _context.Users
             .FirstOrDefaultAsync(
-                x => x.PhoneNumber == request.PhoneNumber,
+                x => x.PhoneNumber == request.PhoneNumber &&
+                     x.Role == UserRole.Admin,
                 cancellationToken);
 
         if (user is null)
-            throw new Exception();
+            throw new UnauthorizedDomainException(invalidCredentials);
 
-        var isValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
+        var isValid = !string.IsNullOrEmpty(user.PasswordHash) &&
+                      _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
 
         if (!isValid)
-            throw new UnauthorizedDomainException();
+            throw new UnauthorizedDomainException(invalidCredentials);
 
         var token = _jwtTokenService.GenerateAccessToken(user);
 

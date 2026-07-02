@@ -22,7 +22,9 @@ import { ReservationConfirmation } from './pages/customer/ReservationConfirmatio
 import { Favorites } from './pages/customer/Favorites';
 import { Notifications } from './pages/customer/Notifications';
 import { Support } from './pages/customer/Support';
+import { Profile } from './pages/customer/Profile';
 import { RegisterPage } from './pages/auth/RegisterPage';
+import { CompleteProfile } from './pages/auth/CompleteProfile';
 
 
 // ── صفحات مدیر رستوران ──────────────────────────────────────
@@ -30,10 +32,12 @@ import { ManagerDashboard } from './pages/manager/ManagerDashboard';
 import { RestaurantOnboarding } from './pages/manager/RestaurantOnboarding';
 import { MenuManagement } from './pages/manager/MenuManagement';
 import { WorkingHoursSettings } from './pages/manager/WorkingHoursSettings';
+import { ManagerProfile } from './pages/manager/ManagerProfile';
 
 // ── صفحات مدیر ارشد (Admin) ─────────────────────────────────
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminProfile } from './pages/admin/AdminProfile';
 
 function AppContent() {
   const location = useLocation();
@@ -63,6 +67,11 @@ function AppContent() {
         <Route path="/login/owner" element={<LoginPage />} />
         <Route path="/otp-verify" element={<OTPVerification />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/complete-profile" element={
+          <ProtectedRoute roles={['customer']}>
+            <CompleteProfile />
+          </ProtectedRoute>
+        } />
 
 
         {/* ── مشتری (نیاز به لاگین) ────────────────── */}
@@ -91,6 +100,11 @@ function AppContent() {
             <Notifications />
           </ProtectedRoute>
         } />
+        <Route path="/customer-dashboard/profile" element={
+          <ProtectedRoute roles={['customer']}>
+            <Profile />
+          </ProtectedRoute>
+        } />
 
         {/* ── مدیر رستوران (نیاز به لاگین) ─────────── */}
         <Route path="/onboarding" element={
@@ -113,12 +127,22 @@ function AppContent() {
             <WorkingHoursSettings />
           </ProtectedRoute>
         } />
+        <Route path="/manager-dashboard/profile" element={
+          <ProtectedRoute roles={['manager']}>
+            <ManagerProfile />
+          </ProtectedRoute>
+        } />
 
         {/* ── مدیر ارشد (Admin) ───────────────────── */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={
           <ProtectedRoute roles={['admin']}>
             <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/profile" element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminProfile />
           </ProtectedRoute>
         } />
 

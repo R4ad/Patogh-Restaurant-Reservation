@@ -76,6 +76,7 @@ export async function login(data: LoginRequest): Promise<LoginResponse> {
   localStorage.setItem('refreshToken', res.refreshToken);
   localStorage.setItem('userRole', role);
   localStorage.setItem('phoneNumber', res.phoneNumber);
+  localStorage.setItem('userId', res.userId);
   return { accessToken: res.accessToken, PhoneNumber: res.phoneNumber };
 }
 
@@ -85,8 +86,17 @@ export async function sendOTP(data: SendOTPRequest): Promise<SendOTPResponse> {
   if (IS_MOCK) {
     await mockDelay(600);
     const user = mockUsers[data.PhoneNumber] ?? mockRegisteredUsers[data.PhoneNumber];
-    if (!user) throw new Error('USER_NOT_FOUND');
-    return { success: true, message: 'کد تأیید ارسال شد' };
+    const isNewUser = !user;
+    if (isNewUser) {
+      // در mock، کاربر جدید را ثبت می‌کنیم (مثل backend)
+      mockRegisteredUsers[data.PhoneNumber] = {
+        password:    '',
+        role:        'customer',
+        accessToken: `mock-token-${data.PhoneNumber}-${Date.now()}`,
+        PhoneNumber: data.PhoneNumber,
+      };
+    }
+    return { success: true, message: 'کد تأیید ارسال شد', isNewUser };
   }
   return apiClient.post<SendOTPResponse>('/api/auth/send-otp', data);
 }
@@ -96,17 +106,14 @@ export async function sendOTP(data: SendOTPRequest): Promise<SendOTPResponse> {
 export async function verifyOTP(data: VerifyOTPRequest): Promise<VerifyOTPResponse> {
   if (IS_MOCK) {
     await mockDelay();
-    const user = mockUsers[data.PhoneNumber]
-      ?? mockRegisteredUsers[data.PhoneNumber]
-      ?? {
-        accessToken: `mock-token-${Date.now()}`,
-        PhoneNumber: data.PhoneNumber,
-        role: 'customer' as UserRole,
-      };
+    const user = mockUsers[data.PhoneNumber] ?? mockRegisteredUsers[data.PhoneNumber];
+    if (!user) throw new Error('کاربر یافت نشد');
+    // پروفایل ناقص: کاربر رمز ندارد (OTP-only account)
+    const hasIncompleteProfile = !user.password;
     localStorage.setItem('accessToken', user.accessToken);
     localStorage.setItem('userRole', user.role);
     localStorage.setItem('phoneNumber', user.PhoneNumber);
-    return { accessToken: user.accessToken, PhoneNumber: user.PhoneNumber };
+    return { accessToken: user.accessToken, PhoneNumber: user.PhoneNumber, hasIncompleteProfile };
   }
   const res = await apiClient.post<BackendLoginResponse>('/api/auth/verify-otp', data);
   const role = mapBackendRole(res.role);
@@ -114,7 +121,12 @@ export async function verifyOTP(data: VerifyOTPRequest): Promise<VerifyOTPRespon
   localStorage.setItem('refreshToken', res.refreshToken);
   localStorage.setItem('userRole', role);
   localStorage.setItem('phoneNumber', res.phoneNumber);
-  return { accessToken: res.accessToken, PhoneNumber: res.phoneNumber };
+  localStorage.setItem('userId', res.userId);
+  return {
+    accessToken:          res.accessToken,
+    PhoneNumber:          res.phoneNumber,
+    hasIncompleteProfile: res.hasIncompleteProfile,
+  };
 }
 
 // ── Admin Login ──────────────────────────────────────────────
@@ -148,6 +160,7 @@ export function logout() {
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('userRole');
   localStorage.removeItem('phoneNumber');
+  localStorage.removeItem('userId');
 }
 
 // ── Helpers ──────────────────────────────────────────────────

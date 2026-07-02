@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<RestaurantImage> RestaurantImages => Set<RestaurantImage>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<UserFavorite> UserFavorites => Set<UserFavorite>();
 
     public new Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade Database
         => base.Database;
@@ -37,6 +38,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<Reservation>()
             .HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<MediaAsset>()
+            .HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<RestaurantImage>()
+            .HasQueryFilter(ri => !ri.IsDeleted && !ri.MediaAsset!.IsDeleted);
+        modelBuilder.Entity<UserFavorite>()
             .HasQueryFilter(x => !x.IsDeleted);
     }
 }

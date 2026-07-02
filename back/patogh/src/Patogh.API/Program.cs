@@ -1,8 +1,11 @@
 using Hangfire;
 using Hangfire.Dashboard;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Patogh.API.Extensions;
 using Patogh.API.Middlewares;
 using Patogh.Infrastructure.BackgroundJobs;
@@ -42,20 +45,29 @@ try
     builder.Services.AddApiHealthChecks(builder.Configuration);
 
     // ── CORS ──────────────────────────────────────────────────────────────────
+    // In production, set Cors__AllowedOrigins__0 (and __1, __2 …) as env vars.
+    // In development the defaults below cover the Vite dev server ports.
+    var corsOrigins = builder.Configuration
+        .GetSection("Cors:AllowedOrigins")
+        .Get<string[]>()
+        ?? ["http://localhost:3000", "http://localhost:5173", "http://localhost:5174"];
+
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("FrontendPolicy", policy =>
         {
             policy
-                .WithOrigins(
-                    "http://localhost:3000",
-                    "http://localhost:5173")
+                .WithOrigins(corsOrigins)
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
     });
 
-    builder.Services.AddDirectoryBrowser();
+    // ── Data Protection ───────────────────────────────────────────────────────
+    // Persist keys to a Docker volume so tokens survive container restarts.
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(
+            new DirectoryInfo("/app/.aspnet/DataProtection-Keys"));
 
     var app = builder.Build();
 
@@ -97,10 +109,22 @@ try
         c.RoutePrefix = string.Empty;
     });
 
-    app.UseStaticFiles();
+    // Serve files uploaded via MediaController from /uploads URL path
+    var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
+    Directory.CreateDirectory(uploadsPath);
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(uploadsPath),
+        RequestPath  = "/uploads",
+        ContentTypeProvider = new FileExtensionContentTypeProvider(),
+    });
+
     app.UseCors("FrontendPolicy");
     app.UseRateLimiter();
-    app.UseHttpsRedirection();
+
+    // Redirect HTTPS only in Production; in Docker dev we run plain HTTP behind a proxy
+    if (app.Environment.IsProduction())
+        app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();

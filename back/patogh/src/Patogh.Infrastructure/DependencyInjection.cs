@@ -63,8 +63,10 @@ public static class DependencyInjection
                     multiplexer.ConnectionRestored += (_, _) =>
                         logger.LogInformation("Redis connection restored.");
 
-                    logger.LogInformation("Redis connected successfully to {Endpoint}.",
-                        redisConnection);
+                    // Log only host:port — never log passwords or full connection strings
+                    var endpoints = string.Join(", ", configOpts.EndPoints.Select(ep =>
+                        ep is System.Net.DnsEndPoint dns ? $"{dns.Host}:{dns.Port}" : ep.ToString()));
+                    logger.LogInformation("Redis connected successfully to {Endpoint}.", endpoints);
                     return multiplexer;
                 }
                 catch (Exception ex)

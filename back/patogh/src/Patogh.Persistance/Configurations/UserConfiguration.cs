@@ -22,6 +22,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Role)
             .IsRequired();
 
+        builder.Property(x => x.DisplayName)
+            .HasMaxLength(100);
+
+        builder.Property(x => x.AvatarUrl)
+            .HasMaxLength(500);
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 

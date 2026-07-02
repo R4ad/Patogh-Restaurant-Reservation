@@ -56,6 +56,7 @@ services:
     volumes:
       - uploads:/app/Uploads
       - logs:/app/logs
+      - dataprotection:/app/.aspnet/DataProtection-Keys
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health/live || exit 1"]
       interval: 30s
@@ -71,4 +72,6 @@ volumes:
   uploads:
     driver: local
   logs:
+    driver: local
+  dataprotection:
     driver: local

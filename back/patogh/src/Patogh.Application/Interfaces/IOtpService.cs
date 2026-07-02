@@ -2,6 +2,7 @@
 
 public interface IOtpService
 {
-    Task SendOtpAsync(string phoneNumber);
+    /// <summary>Generates and sends the OTP; returns the generated code.</summary>
+    Task<string> SendOtpAsync(string phoneNumber);
     Task<bool> VerifyOtpAsync(string phoneNumber, string code);
 }

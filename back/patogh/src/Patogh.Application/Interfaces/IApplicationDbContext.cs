@@ -13,6 +13,7 @@ public interface IApplicationDbContext
     DbSet<MediaAsset> MediaAssets { get; }
     DbSet<Reservation> Reservations { get; }
     DbSet<RefreshToken> RefreshTokens { get; }
+    DbSet<UserFavorite> UserFavorites { get; }
 
 
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade Database { get; }

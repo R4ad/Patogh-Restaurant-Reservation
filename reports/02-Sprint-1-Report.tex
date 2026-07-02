@@ -1,0 +1,360 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=3cm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\usepackage{xepersian}
+\settextfont[Scale=1.1]{Vazirmatn}
+\setlatintextfont{Times New Roman}
+
+\definecolor{primaryorange}{RGB}{234, 88, 12}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+\definecolor{darkgray}{RGB}{80, 80, 80}
+\definecolor{successgreen}{RGB}{22, 163, 74}
+\definecolor{infoblue}{RGB}{37, 99, 235}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryorange,
+    urlcolor=primaryorange
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{پروژه پاتوق — سامانه رزرو رستوران}
+\lhead{گزارش اسپرینت اول}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+% \pagenumbering{persian}  % disabled for hyperref compatibility
+
+%% ─── صفحه عنوان ────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\LARGE\bfseries پروژه پاتوق (پاتوق)\\[0.5em]}
+{\Large\bfseries سامانه مدیریت و رزرو کافه و رستوران\\[2em]}
+\rule{\linewidth}{0.5mm}\\[1em]
+{\huge\bfseries\color{primaryorange} گزارش اسپرینت اول}\\[0.5em]
+{\Large زیرساخت و پایه‌گذاری}\\[1em]
+\rule{\linewidth}{0.5mm}\\[2em]
+{\large درس: طراحی نرم‌افزار\\[0.5em]}
+{\large مدت اسپرینت: ۲ هفته\\[0.5em]}
+{\large تاریخ تهیه: تیر ۱۴۰۵}\\[3em]
+\vfill
+{\normalsize\color{darkgray}
+این گزارش پوشش‌دهی اسپرینت اول پروژه پاتوق را شرح می‌دهد که
+در آن زیرساخت اصلی بک‌اند و فرانت‌اند، سیستم احراز هویت و
+موجودیت‌های اصلی دامنه پیاده‌سازی شدند.}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+%% ─── ۱. هدف اسپرینت ────────────────────────────────────────────────────────
+\section{هدف اسپرینت}
+
+هدف اصلی اسپرینت اول، ایجاد پایه‌های محکم معماری سیستم و پیاده‌سازی جریان
+احراز هویت کامل است. در پایان این اسپرینت باید کاربر بتواند از طریق \lr{OTP}
+یا رمز عبور وارد سیستم شود و توکن‌های دسترسی دریافت کند.
+
+\subsection{تعریف «انجام‌شده» (Definition of Done)}
+\begin{itemize}[rightmargin=0.5cm]
+  \item کد بدون خطای کامپایل
+  \item \lr{API} مستندسازی‌شده در \lr{Swagger}
+  \item \lr{Migration}های پایگاه داده اعمال‌شده
+  \item صفحات فرانت‌اند با \lr{UI} کارکرد واقعی (نه \lr{mock})
+  \item \lr{CORS} صحیح پیکربندی‌شده
+\end{itemize}
+
+\newpage
+
+%% ─── ۲. Sprint Backlog ─────────────────────────────────────────────────────
+\section{\lr{Sprint Backlog}}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{آیتم} & \textbf{توضیح} & \textbf{مسئول} & \textbf{وضعیت} \\
+\hline
+\endhead
+راه‌اندازی پروژه بک‌اند & معماری تمیز، لایه‌بندی & بک‌اند & انجام شد \\
+\hline
+تعریف موجودیت‌های دامنه & کلاس‌های \lr{Domain} & بک‌اند & انجام شد \\
+\hline
+پیکربندی \lr{EF Core} & \lr{DbContext}، نگاشت‌ها & بک‌اند & انجام شد \\
+\hline
+پیکربندی \lr{Redis} & \lr{OTP} و کش & بک‌اند & انجام شد \\
+\hline
+\lr{Docker Compose} & \lr{PostgreSQL} + \lr{Redis} & بک‌اند & انجام شد \\
+\hline
+سرویس \lr{OTP} & ارسال و تأیید کد & بک‌اند & انجام شد \\
+\hline
+سرویس \lr{JWT} & صدور توکن دسترسی + تازه‌سازی & بک‌اند & انجام شد \\
+\hline
+\lr{AuthController} & \lr{Endpoint}های احراز هویت & بک‌اند & انجام شد \\
+\hline
+\lr{Middleware} خطا & فرمت \lr{RFC 7807} & بک‌اند & انجام شد \\
+\hline
+راه‌اندازی پروژه فرانت‌اند & \lr{Vite + React + TypeScript} & فرانت‌اند & انجام شد \\
+\hline
+سیستم مسیریابی & \lr{React Router 7} & فرانت‌اند & انجام شد \\
+\hline
+صفحه انتخاب نقش & \lr{RoleSelection} & فرانت‌اند & انجام شد \\
+\hline
+صفحه ورود & \lr{LoginPage} & فرانت‌اند & انجام شد \\
+\hline
+صفحه تأیید \lr{OTP} & \lr{OTPVerification} & فرانت‌اند & انجام شد \\
+\hline
+صفحه ثبت‌نام & \lr{RegisterPage} & فرانت‌اند & انجام شد \\
+\hline
+\lr{AuthContext} & مدیریت وضعیت احراز هویت & فرانت‌اند & انجام شد \\
+\hline
+\end{longtable}
+
+\newpage
+
+%% ─── ۳. بک‌اند ─────────────────────────────────────────────────────────────
+\section{پیاده‌سازی بک‌اند}
+
+\subsection{معماری تمیز (Clean Architecture)}
+
+پروژه بک‌اند بر اساس معماری تمیز با چهار لایه اصلی ساختاردهی شد:
+
+\begin{description}[rightmargin=0.5cm]
+  \item[\lr{Patogh.Domain}:] موجودیت‌های دامنه، \lr{Enum}ها و اینترفیس‌های پایه.
+    هیچ وابستگی خارجی ندارد.
+  \item[\lr{Patogh.Application}:] منطق کسب‌وکار با الگوی \lr{CQRS + MediatR}.
+    فقط به \lr{Domain} وابسته است.
+  \item[\lr{Patogh.Infrastructure}:] سرویس‌های خارجی: \lr{JWT}، \lr{OTP}، ارسال پیامک،
+    آپلود فایل.
+  \item[\lr{Patogh.Persistence}:] \lr{DbContext}، \lr{Migration}ها و پیکربندی \lr{EF Core}.
+  \item[\lr{Patogh.API}:] کنترلرها، \lr{Middleware}ها و تنظیمات \lr{ASP.NET Core}.
+\end{description}
+
+\subsection{موجودیت‌های دامنه}
+
+در این اسپرینت موجودیت‌های اصلی دامنه تعریف شدند:
+
+\begin{longtable}{|r|r|r|}
+\hline
+\textbf{موجودیت} & \textbf{فیلدهای اصلی} & \textbf{توضیح} \\
+\hline
+\endhead
+\lr{User} & \lr{PhoneNumber, PasswordHash, Role, DisplayName, AvatarUrl} & کاربر سیستم \\
+\hline
+\lr{Restaurant} & \lr{Name, Description, Location, FoodType, Status, OwnerId} & رستوران \\
+\hline
+\lr{RestaurantTable} & \lr{TableNumber, Capacity, RestaurantId} & میز رستوران \\
+\hline
+\lr{MenuItem} & \lr{Name, Description, Price, ImageUrl, RestaurantId} & آیتم منو \\
+\hline
+\lr{Reservation} & \lr{CustomerId, TableId, Date, StartTime, EndTime, Status} & رزرو \\
+\hline
+\lr{RefreshToken} & \lr{Token, UserId, ExpiresAt, IsRevoked} & توکن تازه‌سازی \\
+\hline
+\lr{UserFavorite} & \lr{UserId, RestaurantId} & علاقه‌مندی \\
+\hline
+\lr{MediaAsset} & \lr{Url, FileName, ContentType} & فایل رسانه‌ای \\
+\hline
+\end{longtable}
+
+\subsection{پیکربندی پایگاه داده}
+
+\begin{itemize}[rightmargin=0.5cm]
+  \item \textbf{\lr{PostgreSQL}:} پایگاه داده اصلی از طریق \lr{Docker Compose} راه‌اندازی شد.
+  \item \textbf{\lr{EF Core 8}:} برای \lr{ORM} و مدیریت \lr{Migration}ها.
+  \item \textbf{\lr{Redis}:} برای ذخیره‌سازی کدهای \lr{OTP} (با \lr{TTL} 2 دقیقه) و کش.
+  \item \textbf{\lr{Docker Compose}:} هر دو سرویس \lr{PostgreSQL} و \lr{Redis} در یک شبکه
+    \lr{Docker} اجرا می‌شوند.
+\end{itemize}
+
+\subsection{سیستم احراز هویت}
+
+\subsubsection{جریان OTP}
+\begin{enumerate}[rightmargin=0.5cm]
+  \item کاربر شماره موبایل را ارسال می‌کند (\lr{POST /api/auth/send-otp})
+  \item سرور یک کد ۶ رقمی تصادفی تولید و در \lr{Redis} ذخیره می‌کند (کلید: \lr{otp:\{phone\}})
+  \item کد از طریق سرویس پیامک ارسال می‌شود
+  \item کاربر کد را برای تأیید ارسال می‌کند (\lr{POST /api/auth/verify-otp})
+  \item پس از تأیید، کد از \lr{Redis} حذف می‌شود (یکبار مصرف)
+  \item توکن دسترسی (\lr{JWT}) و توکن تازه‌سازی صادر می‌شود
+\end{enumerate}
+
+\subsubsection{ویژگی‌های امنیتی OTP}
+\begin{itemize}[rightmargin=0.5cm]
+  \item اعتبار ۲ دقیقه‌ای (\lr{TTL} در \lr{Redis})
+  \item یکبار مصرف: پس از تأیید موفق بلافاصله حذف می‌شود
+  \item \lr{OTP} در لاگ‌های سیستم ثبت نمی‌شود (امنیت)
+  \item محدودیت ۵ درخواست در دقیقه برای جلوگیری از \lr{Brute Force}
+\end{itemize}
+
+\subsubsection{ساختار JWT}
+\begin{itemize}[rightmargin=0.5cm]
+  \item \textbf{توکن دسترسی:} عمر کوتاه (۱۵ دقیقه)، حاوی \lr{UserId، Role، PhoneNumber}
+  \item \textbf{توکن تازه‌سازی:} عمر بلند (۷ روز)، ذخیره در پایگاه داده
+  \item \lr{Token Rotation}: هر بار استفاده از توکن تازه‌سازی، توکن جدید صادر می‌شود
+\end{itemize}
+
+\subsection{Endpoint‌های پیاده‌سازی‌شده}
+
+\begin{longtable}{|r|r|r|r|}
+\hline
+\textbf{متد} & \textbf{مسیر} & \textbf{توضیح} & \textbf{احراز هویت} \\
+\hline
+\endhead
+\lr{POST} & \lr{/api/auth/send-otp} & ارسال کد \lr{OTP} & بدون نیاز \\
+\hline
+\lr{POST} & \lr{/api/auth/verify-otp} & تأیید \lr{OTP} و دریافت توکن & بدون نیاز \\
+\hline
+\lr{POST} & \lr{/api/auth/login} & ورود با رمز عبور & بدون نیاز \\
+\hline
+\lr{POST} & \lr{/api/auth/register} & ثبت‌نام با رمز عبور & بدون نیاز \\
+\hline
+\lr{POST} & \lr{/api/auth/refresh} & تجدید توکن دسترسی & بدون نیاز \\
+\hline
+\lr{POST} & \lr{/api/auth/revoke} & باطل کردن توکن (خروج) & نیاز دارد \\
+\hline
+\end{longtable}
+
+\newpage
+
+%% ─── ۴. فرانت‌اند ──────────────────────────────────────────────────────────
+\section{پیاده‌سازی فرانت‌اند}
+
+\subsection{راه‌اندازی پروژه}
+
+پروژه فرانت‌اند با \lr{Vite 6.3.5 + React 18 + TypeScript} راه‌اندازی شد.
+
+\textbf{پکیج‌های اصلی نصب‌شده:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item \lr{React Router 7}: مسیریابی سمت کلاینت
+  \item \lr{Tailwind CSS v4}: استایل‌دهی با \lr{@tailwindcss/vite}
+  \item \lr{shadcn/ui + Radix UI}: کامپوننت‌های \lr{UI}
+  \item \lr{React Hook Form}: مدیریت فرم‌ها
+  \item \lr{Sonner}: نمایش اعلان‌های \lr{toast}
+  \item \lr{Lucide React}: آیکون‌ها
+  \item \lr{date-fns}: کار با تاریخ
+\end{itemize}
+
+\subsection{سیستم مسیریابی}
+
+مسیریابی پروژه در فایل \texttt{\lr{App.tsx}} تعریف شده است و شامل سه گروه اصلی است:
+مسیرهای عمومی، مسیرهای احراز هویت و مسیرهای محافظت‌شده بر اساس نقش.
+
+کامپوننت \texttt{\lr{ProtectedRoute}} از دسترسی کاربران بدون نقش مناسب به صفحات محافظت‌شده
+جلوگیری می‌کند.
+
+\subsection{صفحات پیاده‌سازی‌شده}
+
+\subsubsection{صفحه انتخاب نقش (RoleSelection)}
+اولین صفحه در جریان ورود، دو دکمه برای انتخاب نقش مشتری یا مدیر رستوران نمایش می‌دهد
+و کاربر را به صفحه ورود مناسب هدایت می‌کند.
+
+\subsubsection{صفحه ورود (LoginPage)}
+\begin{itemize}[rightmargin=0.5cm]
+  \item دو حالت: ورود با \lr{OTP} (پیش‌فرض) و ورود با رمز عبور
+  \item اعتبارسنجی فرمت شماره موبایل ایرانی
+  \item ارسال درخواست \lr{OTP} و هدایت به صفحه تأیید
+  \item نمایش پیام‌های خطای فارسی
+\end{itemize}
+
+\subsubsection{صفحه تأیید OTP (OTPVerification)}
+\begin{itemize}[rightmargin=0.5cm]
+  \item اینپوت ۶ خانه‌ای برای کد \lr{OTP}
+  \item تایمر شمارش معکوس ۲ دقیقه‌ای
+  \item امکان درخواست ارسال مجدد کد
+  \item هدایت خودکار پس از تأیید موفق بر اساس نقش
+\end{itemize}
+
+\subsubsection{صفحه ثبت‌نام (RegisterPage)}
+فرم ثبت‌نام با شماره موبایل، رمز عبور و تأیید رمز عبور. اعتبارسنجی تمام فیلدها
+با \lr{React Hook Form}.
+
+\subsection{مدیریت وضعیت احراز هویت}
+
+\lr{AuthContext} برای مدیریت وضعیت ورود کاربر در تمام صفحات ایجاد شد:
+
+\begin{itemize}[rightmargin=0.5cm]
+  \item ذخیره توکن دسترسی در \lr{localStorage}
+  \item ذخیره اطلاعات کاربر (نقش، شماره، نام)
+  \item تابع خروج از سیستم
+  \item بارگذاری خودکار وضعیت از \lr{localStorage} پس از رفرش صفحه
+\end{itemize}
+
+\newpage
+
+%% ─── ۵. چالش‌ها ─────────────────────────────────────────────────────────────
+\section{چالش‌ها و راه‌حل‌ها}
+
+\subsection{چالش ۱: خطای BCrypt با هش خالی}
+\begin{description}[rightmargin=0.5cm]
+  \item[مشکل:] هنگام ثبت‌نام کاربر بدون رمز عبور (ورود با \lr{OTP})، فراخوانی
+    \lr{BCrypt.Verify} با رشته خالی خطا می‌داد.
+  \item[راه‌حل:] افزودن بررسی \texttt{\lr{string.IsNullOrEmpty(PasswordHash)}} قبل از
+    فراخوانی \lr{BCrypt}. کاربران \lr{OTP}-only مقدار \lr{PasswordHash} خالی دارند و
+    ورود با رمز عبور برای آن‌ها امکان‌پذیر نیست.
+\end{description}
+
+\subsection{چالش ۲: پیکربندی CORS}
+\begin{description}[rightmargin=0.5cm]
+  \item[مشکل:] فرانت‌اند روی پورت \lr{5173} اجرا می‌شد اما \lr{CORS} سرور این پورت را
+    مجاز نمی‌دانست.
+  \item[راه‌حل:] پیکربندی \lr{CORS} با افزودن \lr{http://localhost:5173} به لیست
+    \lr{AllowedOrigins} در \lr{appsettings.json}. همچنین \lr{AllowCredentials()} برای
+    ارسال کوکی‌های توکن تازه‌سازی فعال شد.
+\end{description}
+
+\subsection{چالش ۳: مدیریت وضعیت IsNewUser}
+\begin{description}[rightmargin=0.5cm]
+  \item[مشکل:] تشخیص اینکه کاربر پس از تأیید \lr{OTP} باید به صفحه تکمیل پروفایل هدایت
+    شود یا به داشبورد.
+  \item[راه‌حل:] فیلد \lr{HasIncompleteProfile} در پاسخ \lr{verify-otp} اضافه شد.
+    فرانت‌اند بر اساس این فیلد تصمیم‌گیری می‌کند.
+\end{description}
+
+\newpage
+
+%% ─── ۶. بازبینی و گذر ───────────────────────────────────────────────────────
+\section{بازبینی و گذر اسپرینت}
+
+\subsection{Sprint Review}
+\begin{itemize}[rightmargin=0.5cm]
+  \item تمامی \lr{Endpoint}های احراز هویت پیاده‌سازی و تست شدند
+  \item جریان کامل \lr{OTP} از ارسال تا دریافت توکن کار می‌کند
+  \item صفحات فرانت‌اند به \lr{API} واقعی وصل شدند
+  \item \lr{Docker Compose} برای محیط توسعه پیکربندی شد
+\end{itemize}
+
+\subsection{Sprint Retrospective}
+
+\textbf{چه چیزی خوب بود:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item معماری تمیز از ابتدا پیاده‌سازی شد که نگهداری کد را ساده کرد
+  \item استفاده از \lr{MediatR} کدهای کنترلر را کوچک و تمیز نگه داشت
+  \item \lr{Docker Compose} راه‌اندازی محیط توسعه را سریع کرد
+\end{itemize}
+
+\textbf{چه چیزی می‌توانست بهتر باشد:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item پیکربندی \lr{CORS} باید زودتر انجام می‌شد تا تأخیر در اتصال فرانت به بک‌اند کاهش می‌یافت
+  \item باید از ابتدا برای \lr{HasIncompleteProfile} برنامه‌ریزی می‌شد
+\end{itemize}
+
+\textbf{اقدامات بهبود برای اسپرینت بعدی:}
+\begin{itemize}[rightmargin=0.5cm]
+  \item تعریف مشخص‌تر \lr{API contract} قبل از شروع پیاده‌سازی
+  \item نوشتن \lr{Integration Test} برای \lr{Endpoint}های اصلی
+\end{itemize}
+
+\end{document}

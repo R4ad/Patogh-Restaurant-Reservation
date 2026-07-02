@@ -1,0 +1,450 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=3cm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\usepackage{xepersian}
+\settextfont[Scale=1.1]{Vazirmatn}
+\setlatintextfont{Times New Roman}
+
+\definecolor{primaryorange}{RGB}{234, 88, 12}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+\definecolor{darkgray}{RGB}{80, 80, 80}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryorange,
+    urlcolor=primaryorange
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{پروژه پاتوق — سامانه رزرو رستوران}
+\lhead{گزارش \lr{User Story}ها}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+% \pagenumbering{persian}  % حذف شد برای سازگاری با hyperref
+
+%% ─── صفحه عنوان ────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\LARGE\bfseries پروژه پاتوق (پاتوق)\\[0.5em]}
+{\Large\bfseries سامانه مدیریت و رزرو کافه و رستوران\\[2em]}
+\rule{\linewidth}{0.5mm}\\[1em]
+{\huge\bfseries\color{primaryorange} گزارش \lr{User Story}های پروژه}\\[1em]
+\rule{\linewidth}{0.5mm}\\[2em]
+{\large درس: طراحی نرم‌افزار\\[0.5em]}
+{\large تاریخ تهیه: تیر ۱۴۰۵}\\[3em]
+\vfill
+{\normalsize\color{darkgray}
+این گزارش \lr{User Story}های تمامی نقش‌های کاربری سیستم پاتوق را
+همراه با معیارهای پذیرش، اولویت‌بندی و وضعیت پیاده‌سازی
+شرح می‌دهد.}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+%% ─── ۱. مقدمه ──────────────────────────────────────────────────────────────
+\section{مقدمه}
+
+\subsection{معرفی سیستم}
+پاتوق (\lr{Patogh}) یک سامانه جامع مدیریت و رزرو رستوران است که به کاربران امکان می‌دهد
+رستوران‌های مورد علاقه خود را جستجو کرده، میز رزرو کنند و تجربه غذاخوری خود را مدیریت نمایند.
+این سیستم برای درس طراحی نرم‌افزار دانشگاهی توسعه یافته است.
+
+\subsection{معماری کلی}
+\begin{itemize}[rightmargin=0.5cm]
+  \item \textbf{بک‌اند:} \lr{ASP.NET Core 8} با معماری تمیز (\lr{Clean Architecture})
+  \item \textbf{فرانت‌اند:} \lr{React 18 + TypeScript + Vite}
+  \item \textbf{پایگاه داده:} \lr{PostgreSQL} از طریق \lr{EF Core} + \lr{Redis} برای \lr{OTP} و کش
+  \item \textbf{احراز هویت:} \lr{JWT} دوگانه (توکن دسترسی + توکن تازه‌سازی) و ورود با \lr{OTP}
+\end{itemize}
+
+\subsection{نقش‌های کاربری}
+سیستم سه نقش اصلی دارد:
+\begin{enumerate}[rightmargin=0.5cm]
+  \item \textbf{مشتری (\lr{Customer}):} جستجو، مشاهده رستوران، رزرو میز، مدیریت رزروها
+  \item \textbf{مدیر رستوران (\lr{RestaurantOwner}):} ثبت و مدیریت رستوران، منو، میز و رزروها
+  \item \textbf{مدیر ارشد (\lr{Admin}):} تأیید رستوران‌ها، مدیریت کاربران، نظارت کلان
+\end{enumerate}
+
+\newpage
+
+%% ─── ۲. User Story‌های مشتری ───────────────────────────────────────────────
+\section{\lr{User Story}های نقش مشتری}
+
+\subsection{US-C01: ورود با کد یکبار مصرف (OTP)}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] ورود به سیستم با شماره موبایل و کد \lr{OTP}
+  \item[داستان:] به عنوان مشتری، می‌خواهم با وارد کردن شماره موبایلم و دریافت کد \lr{OTP}
+  وارد سیستم شوم تا نیازی به یادآوری رمز عبور نداشته باشم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item کد \lr{OTP} ظرف ۳۰ ثانیه دریافت می‌شود
+    \item کد دارای اعتبار ۲ دقیقه‌ای است
+    \item کد پس از استفاده یکبار باطل می‌شود
+    \item در صورت ورود اشتباه، پیام خطای مناسب فارسی نمایش داده می‌شود
+    \item سیستم پس از ۵ درخواست در دقیقه، دسترسی را محدود می‌کند
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C02: ثبت‌نام در سیستم}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] ثبت‌نام با شماره موبایل و انتخاب نقش
+  \item[داستان:] به عنوان کاربر جدید، می‌خواهم با شماره موبایل ثبت‌نام کنم و نقش مشتری
+  یا مدیر رستوران را انتخاب کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item صفحه انتخاب نقش قبل از ورود نمایش داده می‌شود
+    \item اعتبارسنجی فرمت شماره موبایل ایرانی
+    \item پیام خوش‌آمدگویی پس از ثبت‌نام موفق
+    \item هدایت خودکار به صفحه تکمیل پروفایل برای کاربران جدید
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C03: جستجو و کشف رستوران}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] جستجوی رستوران بر اساس نام و نوع غذا
+  \item[داستان:] به عنوان مشتری، می‌خواهم رستوران‌ها را بر اساس نام، نوع غذا یا موقعیت
+  جغرافیایی جستجو کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش کارت رستوران با عکس، نام، نوع غذا و امتیاز
+    \item فیلتر کردن بر اساس نوع غذا
+    \item نمایش فقط رستوران‌های تأییدشده
+    \item صفحه‌بندی نتایج جستجو
+  \end{itemize}
+  \item[اولویت:] بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C04: مشاهده جزئیات رستوران}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] مشاهده اطلاعات کامل رستوران
+  \item[داستان:] به عنوان مشتری، می‌خواهم صفحه کامل رستوران را با منو، تصاویر، ساعات
+  کاری و میزهای موجود ببینم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش منوی کامل با قیمت‌ها
+    \item نمایش ساعات کاری هفتگی
+    \item دکمه رزرو میز فعال و قابل کلیک
+    \item نمایش تصاویر رستوران
+  \end{itemize}
+  \item[اولویت:] بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C05: رزرو میز}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] رزرو میز در رستوران
+  \item[داستان:] به عنوان مشتری، می‌خواهم میز مناسب برای تعداد نفرات و تاریخ مورد نظرم
+  را رزرو کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item انتخاب تاریخ (با تقویم شمسی) و ساعت شروع
+    \item نمایش میزهای در دسترس برای آن بازه زمانی
+    \item مدت رزرو ثابت ۲ ساعته (قانون کسب‌وکار)
+    \item تأیید رزرو با نمایش خلاصه اطلاعات
+    \item ارسال اعلان پس از ثبت رزرو
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C06: مدیریت رزروها}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] مشاهده و لغو رزروها
+  \item[داستان:] به عنوان مشتری، می‌خواهم لیست رزروهای گذشته و آینده‌ام را ببینم و در
+  صورت لزوم آن‌ها را لغو کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش رزروها با وضعیت‌های مختلف (در انتظار، تأیید شده، لغو شده)
+    \item امکان لغو رزرو قبل از زمان مقرر
+    \item نمایش پیام تأیید قبل از لغو
+    \item به‌روزرسانی فوری وضعیت پس از لغو
+  \end{itemize}
+  \item[اولویت:] بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C07: علاقه‌مندی‌ها}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] ذخیره رستوران‌های مورد علاقه
+  \item[داستان:] به عنوان مشتری، می‌خواهم رستوران‌های مورد علاقه‌ام را نشانه‌گذاری کرده
+  و بعداً به آن‌ها دسترسی سریع داشته باشم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item دکمه قلب برای افزودن/حذف از علاقه‌مندی‌ها
+    \item صفحه مستقل نمایش علاقه‌مندی‌ها
+    \item تغییر فوری وضعیت بدون بارگذاری مجدد صفحه
+  \end{itemize}
+  \item[اولویت:] متوسط \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C08: اعلان‌ها}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] دریافت اعلان‌های مربوط به رزرو
+  \item[داستان:] به عنوان مشتری، می‌خواهم اعلان‌های مرتبط با وضعیت رزروهایم را دریافت کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item اعلان تأیید رزرو توسط رستوران
+    \item اعلان رد رزرو با دلیل
+    \item اعلان یادآوری قبل از وقت رزرو
+    \item نمایش تعداد اعلان‌های خوانده‌نشده
+  \end{itemize}
+  \item[اولویت:] متوسط \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-C09: مدیریت پروفایل}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] ویرایش اطلاعات شخصی و آپلود آواتار
+  \item[داستان:] به عنوان مشتری، می‌خواهم نام نمایشی و تصویر پروفایل خود را تنظیم کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item ویرایش نام نمایشی
+    \item آپلود و تغییر تصویر پروفایل
+    \item تغییر رمز عبور
+    \item تأیید تغییرات با پیام موفقیت
+  \end{itemize}
+  \item[اولویت:] پایین \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\newpage
+
+%% ─── ۳. User Story‌های مدیر رستوران ─────────────────────────────────────────
+\section{\lr{User Story}های نقش مدیر رستوران}
+
+\subsection{US-M01: ثبت رستوران جدید}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] ثبت رستوران با فرایند چندمرحله‌ای
+  \item[داستان:] به عنوان مدیر رستوران، می‌خواهم اطلاعات کامل رستورانم را در چندین مرحله
+  وارد کنم تا برای تأیید ادمین ارسال شود.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item فرم چندمرحله‌ای (نام، توضیح، موقعیت، نوع غذا، ساعات کاری، تصاویر)
+    \item آپلود تصاویر رستوران
+    \item ذخیره پیش‌نویس در هر مرحله
+    \item وضعیت اولیه: در انتظار تأیید (\lr{Pending})
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-M02: مدیریت منوی رستوران}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] افزودن، ویرایش و حذف آیتم‌های منو
+  \item[داستان:] به عنوان مدیر رستوران، می‌خواهم منوی رستورانم را به‌روز نگه دارم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item افزودن آیتم جدید با نام، توضیح، قیمت و تصویر
+    \item ویرایش آیتم‌های موجود
+    \item حذف آیتم با تأیید
+    \item نمایش لیست کامل منو
+  \end{itemize}
+  \item[اولویت:] بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-M03: مدیریت میزها}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] تعریف و مدیریت میزهای رستوران
+  \item[داستان:] به عنوان مدیر رستوران، می‌خواهم تعداد و ظرفیت میزهای رستورانم را
+  تعریف و مدیریت کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item افزودن میز با شماره و ظرفیت
+    \item حذف میز
+    \item نمایش وضعیت اشغال بودن میز
+  \end{itemize}
+  \item[اولویت:] بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-M04: مدیریت رزروهای رستوران}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] مشاهده، تأیید و رد رزروها
+  \item[داستان:] به عنوان مدیر رستوران، می‌خواهم رزروهای ثبت‌شده را ببینم و آن‌ها را
+  تأیید یا رد کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش لیست رزروها با فیلتر بر اساس تاریخ و وضعیت
+    \item تأیید رزرو با ارسال اعلان به مشتری
+    \item رد رزرو با امکان وارد کردن دلیل
+    \item لغو رزرو توسط مدیر رستوران
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-M05: تنظیم ساعات کاری}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] تنظیم ساعات کاری هفتگی رستوران
+  \item[داستان:] به عنوان مدیر رستوران، می‌خواهم ساعات باز و بسته بودن رستوران را برای
+  هر روز هفته به‌طور جداگانه تنظیم کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item تنظیم ساعت شروع و پایان برای هر روز هفته
+    \item علامت‌گذاری روزهای تعطیل
+    \item ذخیره تغییرات با تأیید
+  \end{itemize}
+  \item[اولویت:] متوسط \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-M06: داشبورد مدیر رستوران}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] مشاهده آمار و وضعیت کلی رستوران
+  \item[داستان:] به عنوان مدیر رستوران، می‌خواهم در یک نگاه آمار رزروها و وضعیت امروز
+  رستورانم را ببینم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش تعداد کل رزروها، تأییدشده‌ها و در انتظار
+    \item نمایش رزروهای امروز
+    \item نمودار وضعیت رزروها
+  \end{itemize}
+  \item[اولویت:] متوسط \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\newpage
+
+%% ─── ۴. User Story‌های مدیر ارشد ────────────────────────────────────────────
+\section{\lr{User Story}های نقش مدیر ارشد (Admin)}
+
+\subsection{US-A01: ورود امن مدیر ارشد}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] ورود مدیر ارشد با نام کاربری و رمز عبور
+  \item[داستان:] به عنوان مدیر ارشد، می‌خواهم از طریق صفحه ورود مخصوص ادمین با اعتبارنامه
+  امن وارد سیستم شوم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item صفحه ورود جداگانه در \lr{/admin/login}
+    \item احراز هویت با رمز عبور هش‌شده (بدون \lr{OTP})
+    \item محافظت در برابر حملات \lr{Brute Force}
+    \item هدایت خودکار به داشبورد پس از ورود موفق
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-A02: تأیید رستوران‌ها}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] بررسی و تأیید یا رد درخواست‌های ثبت رستوران
+  \item[داستان:] به عنوان مدیر ارشد، می‌خواهم درخواست‌های ثبت رستوران جدید را بررسی
+  کرده و آن‌ها را تأیید یا رد کنم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش لیست رستوران‌های در انتظار تأیید
+    \item مشاهده جزئیات کامل هر رستوران
+    \item تأیید با یک کلیک و ارسال اعلان به مدیر رستوران
+    \item رد با امکان وارد کردن دلیل
+  \end{itemize}
+  \item[اولویت:] بسیار بالا \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-A03: مدیریت کاربران}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] مشاهده لیست کاربران و تغییر نقش
+  \item[داستان:] به عنوان مدیر ارشد، می‌خواهم لیست تمام کاربران را ببینم و در صورت لزوم
+  نقش آن‌ها را تغییر دهم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item نمایش لیست کاربران با صفحه‌بندی
+    \item فیلتر بر اساس نقش
+    \item تغییر نقش کاربر
+    \item نمایش اطلاعات تماس کاربر
+  \end{itemize}
+  \item[اولویت:] متوسط \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\subsection{US-A04: داشبورد آمار کلی}
+\begin{description}[rightmargin=0.5cm]
+  \item[عنوان:] مشاهده آمار کلی سیستم
+  \item[داستان:] به عنوان مدیر ارشد، می‌خواهم در داشبورد خود آمار کلی سیستم شامل
+  تعداد کاربران، رستوران‌ها و رزروها را ببینم.
+  \item[معیارهای پذیرش:]
+  \begin{itemize}[rightmargin=0.5cm]
+    \item تعداد کل کاربران، رستوران‌ها و رزروها
+    \item تعداد رستوران‌های در انتظار تأیید
+    \item نمودار رشد ماهانه
+  \end{itemize}
+  \item[اولویت:] متوسط \quad \textbf{وضعیت:} پیاده‌سازی شده
+\end{description}
+
+\newpage
+
+%% ─── ۵. جدول اولویت‌بندی ────────────────────────────────────────────────────
+\section{جدول اولویت‌بندی \lr{User Story}ها}
+
+\begin{longtable}{|r|r|r|r|r|}
+\hline
+\textbf{کد} & \textbf{عنوان} & \textbf{نقش} & \textbf{اولویت} & \textbf{وضعیت} \\
+\hline
+\endhead
+\lr{US-C01} & ورود با \lr{OTP} & مشتری & بسیار بالا & انجام شده \\
+\hline
+\lr{US-C02} & ثبت‌نام & مشتری & بسیار بالا & انجام شده \\
+\hline
+\lr{US-C05} & رزرو میز & مشتری & بسیار بالا & انجام شده \\
+\hline
+\lr{US-M01} & ثبت رستوران & مدیر رستوران & بسیار بالا & انجام شده \\
+\hline
+\lr{US-M04} & مدیریت رزروها & مدیر رستوران & بسیار بالا & انجام شده \\
+\hline
+\lr{US-A01} & ورود ادمین & مدیر ارشد & بسیار بالا & انجام شده \\
+\hline
+\lr{US-A02} & تأیید رستوران & مدیر ارشد & بسیار بالا & انجام شده \\
+\hline
+\lr{US-C03} & جستجوی رستوران & مشتری & بالا & انجام شده \\
+\hline
+\lr{US-C04} & جزئیات رستوران & مشتری & بالا & انجام شده \\
+\hline
+\lr{US-C06} & مدیریت رزروها & مشتری & بالا & انجام شده \\
+\hline
+\lr{US-M02} & مدیریت منو & مدیر رستوران & بالا & انجام شده \\
+\hline
+\lr{US-M03} & مدیریت میزها & مدیر رستوران & بالا & انجام شده \\
+\hline
+\lr{US-C07} & علاقه‌مندی‌ها & مشتری & متوسط & انجام شده \\
+\hline
+\lr{US-C08} & اعلان‌ها & مشتری & متوسط & انجام شده \\
+\hline
+\lr{US-M05} & ساعات کاری & مدیر رستوران & متوسط & انجام شده \\
+\hline
+\lr{US-M06} & داشبورد مدیر & مدیر رستوران & متوسط & انجام شده \\
+\hline
+\lr{US-A03} & مدیریت کاربران & مدیر ارشد & متوسط & انجام شده \\
+\hline
+\lr{US-A04} & آمار کلی & مدیر ارشد & متوسط & انجام شده \\
+\hline
+\lr{US-C09} & مدیریت پروفایل & مشتری & پایین & انجام شده \\
+\hline
+\end{longtable}
+
+\newpage
+
+%% ─── ۶. وابستگی‌ها ──────────────────────────────────────────────────────────
+\section{وابستگی‌های بین \lr{User Story}ها}
+
+\begin{itemize}[rightmargin=0.5cm]
+  \item \lr{US-C05} (رزرو میز) به \lr{US-C01} (ورود) و \lr{US-C04} (جزئیات رستوران) وابسته است.
+  \item \lr{US-C06} (مدیریت رزروها) به \lr{US-C05} (رزرو میز) وابسته است.
+  \item \lr{US-C07} (علاقه‌مندی‌ها) به \lr{US-C01} (ورود) وابسته است.
+  \item \lr{US-M04} (مدیریت رزروها مدیر) به \lr{US-M01} (ثبت رستوران) وابسته است.
+  \item \lr{US-M02} و \lr{US-M03} به \lr{US-M01} وابسته هستند.
+  \item \lr{US-A02} (تأیید رستوران) پیش‌نیاز نمایش رستوران در لیست عمومی است.
+  \item \lr{US-C03} و \lr{US-C04} تنها رستوران‌های تأییدشده توسط \lr{US-A02} را نمایش می‌دهند.
+\end{itemize}
+
+\section{نتیجه‌گیری}
+
+تمامی ۱۹ \lr{User Story} تعریف‌شده در این گزارش در طول سه اسپرینت پیاده‌سازی و تحویل داده شدند.
+سیستم پاتوق به عنوان یک نمونه کامل از سامانه رزرو رستوران، تمامی قابلیت‌های اساسی را پوشش می‌دهد:
+از ثبت‌نام کاربر تا رزرو میز، از مدیریت منو تا تأیید رستوران توسط ادمین.
+
+\end{document}

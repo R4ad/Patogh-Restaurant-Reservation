@@ -86,12 +86,15 @@ export interface LoginRequest {
 
 /** پاسخ بک‌اند برای login/verify-otp (camelCase) */
 export interface BackendLoginResponse {
-  accessToken:    string;
-  refreshToken:   string;
-  phoneNumber:    string;
-  role:           string;  // "Customer" | "RestaurantOwner" | "Admin"
-  userId:         string;
-  expiresInMinutes: number;
+  accessToken:           string;
+  refreshToken:          string;
+  phoneNumber:           string;
+  role:                  string;  // "Customer" | "RestaurantOwner" | "Admin"
+  userId:                string;
+  expiresInMinutes:      number;
+  /** کاربری که هنوز رمز یا پروفایل تکمیل نکرده (OTP-only account).
+   *  متفاوت از isNewUser در sendOtp — حتی کاربر قدیمی که پروفایل ناقص دارد هم true می‌گیرد. */
+  hasIncompleteProfile?: boolean;
 }
 
 /** مدل ساده برای استفاده داخلی سرویس */
@@ -101,10 +104,20 @@ export interface LoginResponse {
 }
 
 export interface SendOTPRequest  { PhoneNumber: string; }
-export interface SendOTPResponse { success: boolean; message: string; }
+export interface SendOTPResponse {
+  success:    boolean;
+  message:    string;
+  isNewUser?: boolean;
+  devOtp?:    string;
+}
 
-export interface VerifyOTPRequest  { PhoneNumber: string; Code: string; }
-export interface VerifyOTPResponse { accessToken: string; PhoneNumber: string; }
+export interface VerifyOTPRequest  { PhoneNumber: string; Code: string; RequestedRole?: string; }
+export interface VerifyOTPResponse {
+  accessToken:            string;
+  PhoneNumber:            string;
+  /** میرور HasIncompleteProfile بک‌اند — پروفایل ناقص است، نه لزوماً کاربر جدید */
+  hasIncompleteProfile?:  boolean;
+}
 
 /** پاسخ صفحه‌بندی‌شده بک‌اند */
 export interface PaginatedResult<T> {
@@ -236,4 +249,26 @@ export interface AvailableTable {
   tableId:     string;
   tableNumber: number;
   capacity:    number;
+}
+
+// ── User Profile ─────────────────────────────────────────────
+
+export interface UserProfile {
+  id:               string;
+  phoneNumber:      string;
+  role:             string;
+  displayName:      string | null;
+  avatarUrl:        string | null;
+  memberSince:      string;
+  totalReservations: number;
+  favoritesCount:   number;
+}
+
+export interface UpdateProfileRequest {
+  displayName: string | null;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword:     string;
 }

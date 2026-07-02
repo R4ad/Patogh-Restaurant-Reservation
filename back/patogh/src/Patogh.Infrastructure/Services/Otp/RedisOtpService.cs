@@ -17,14 +17,14 @@ public class RedisOtpService : IOtpService
         _smsSender = smsSender;
     }
 
-    public async Task SendOtpAsync(string phoneNumber)
+    public async Task<string> SendOtpAsync(string phoneNumber)
     {
-        // FIX: Random is not cryptographically secure. Use RandomNumberGenerator.
         var otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
         var key = BuildKey(phoneNumber);
 
         await _db.StringSetAsync(key, otp, OtpExpiry);
         await _smsSender.SendAsync(phoneNumber, $"کد تأیید پاتوق: {otp}");
+        return otp;
     }
 
     public async Task<bool> VerifyOtpAsync(string phoneNumber, string code)
